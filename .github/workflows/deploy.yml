@@ -1,0 +1,37 @@
+name: Deploy to Render and Vercel
+
+on:
+  push:
+    branches:
+      - main # Change to the branch you want to deploy from
+
+jobs:
+  deploy:
+    name: Deploy to Render and Vercel
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Deploy to Render
+      - name: Deploy to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "serviceId": "your-render-service-id",
+                  "clearCache": true
+                }' \
+            https://api.render.com/v1/services/your-render-service-id/deploys
+
+      # Deploy to Vercel
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npx vercel deploy --prod --token $VERCEL_TOKEN

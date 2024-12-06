@@ -5,16 +5,29 @@ import ComingSoon from '../components/ComingSoon';
 const Home = () => {
   const [user, setUser] = useState(null);
   const [showComingSoon, setShowComingSoon] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in
+    const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    if (!userData) {
-      navigate('/');
+    
+    if (!token || !userData) {
+      navigate('/', { replace: true });
       return;
     }
-    setUser(JSON.parse(userData));
+
+    try {
+      setUser(JSON.parse(userData));
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/', { replace: true });
+    } finally {
+      setIsLoading(false);
+    }
   }, [navigate]);
 
   const handleLogout = () => {
@@ -28,6 +41,14 @@ const Home = () => {
   const handleProfileAction = () => {
     setShowComingSoon(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
