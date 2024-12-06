@@ -65,7 +65,7 @@ const SignupPage = () => {
 
       if (response.ok) {
         console.log('User created successfully:', data);
-        navigate('/login');
+        navigate('/');
       } else {
         console.error('Signup error:', data);
         setPasswordError(data.error);
@@ -119,6 +119,7 @@ const SignupPage = () => {
               value={formData.role}
               onChange={handleChange}
               placeholder="Job Role/Title"
+              required
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -132,6 +133,7 @@ const SignupPage = () => {
               value={formData.experience}
               onChange={handleChange}
               placeholder="Years of Experience"
+              required
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -145,6 +147,7 @@ const SignupPage = () => {
               value={formData.skills}
               onChange={handleChange}
               placeholder="Skills (comma-separated)"
+              required
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -204,6 +207,7 @@ const SignupPage = () => {
           {/* Submit Button */}
           <button 
             type="submit" 
+            onClick={handleSubmit}
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
             Create Account
