@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ComingSoon from '../components/ComingSoon';
+import Navbar from '../components/Navbar';
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -58,24 +59,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Navigation Bar */}
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">Project Portal</h1>
-            </div>
-            <div className="flex items-center">
-              <button
-                onClick={handleLogout}
-                className="ml-4 px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar title="Project Portal" />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -112,6 +96,12 @@ const Home = () => {
                   className="px-4 py-2 text-sm text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   Edit Details
+                </button>
+                <button 
+                  onClick={() => navigate('/projects')}
+                  className="px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  View Projects
                 </button>
               </div>
             </div>
