@@ -31,17 +31,13 @@ const Home = () => {
     }
   }, [navigate]);
 
-  const handleLogout = () => {
-    // Clear local storage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    // Redirect to login page
-    navigate('/');
+  const handleProfileAction = () => {
+    navigate('/profile');
   };
 
-  const handleProfileAction = () => {
-    setShowComingSoon(true);
-  };
+  const handleViewUsers = () =>{
+    navigate('/users');
+  }
 
   if (isLoading) {
     return (
@@ -92,10 +88,10 @@ const Home = () => {
                   View Profile
                 </button>
                 <button 
-                  onClick={handleProfileAction}
+                  onClick={handleViewUsers}
                   className="px-4 py-2 text-sm text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
-                  Edit Details
+                  View users
                 </button>
                 <button 
                   onClick={() => navigate('/projects')}

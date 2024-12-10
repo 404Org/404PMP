@@ -32,6 +32,7 @@ const LoginPage = () => {
 
       // Store token and user data in localStorage
       localStorage.setItem('token', data.access_token);
+      localStorage.setItem('_id', data.user._id);
       localStorage.setItem('user', JSON.stringify(data.user));
 
       // Redirect to dashboard or home page
