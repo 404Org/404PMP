@@ -12,7 +12,11 @@ import ProjectList from './pages/Project';
 import ProjectDetails from './components/projects/ProjectDetails';
 import NewProject from './components/projects/NewProject';
 import EditProject from './components/projects/EditProject';
-
+import UserProfile from './components/users/UserProfile';
+import UserList from './components/users/UserList';
+import UserDetails from './components/users/UserDetails';
+import ProfileView from './components/users/ProfileView';
+import UserEdit from './components/users/UserEdit';
 
 function App() {
   return (
@@ -33,6 +37,11 @@ function App() {
                       <Route path="/projects/:id/edit" element={<EditProject />} />
                       <Route path="/logout" element={<Logout />} />
                       <Route path="/coming-soon" element={<ComingSoon />} />
+                      <Route path="/profile" element={<UserProfile />} />
+                      <Route path="/users" element={<UserList />} />
+                      <Route path="/users/:id" element={<UserDetails />} />
+                      <Route path="/profile/:id" element={<ProfileView />} />
+                      <Route path="/users/:id/edit" element={<UserEdit />} />
                     </Route>
                 </Routes>
             </div>
