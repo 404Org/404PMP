@@ -6,16 +6,17 @@ const SignupPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    role: '',
     designation: '',
     experience: '',
     skills: '',
     bio: '',
     password: '',
     confirmPassword: '',
-    role: ''
   });
 
   const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -31,9 +32,19 @@ const SignupPage = () => {
     }
   };
 
+  const handleBlur = (e) => {
+    if (e.target.name === 'email' && formData.email) {
+      if (!formData.email.endsWith('@terawe.com')) {
+        setEmailError('Please use a valid Terawe email address (name@terawe.com)');
+      } else {
+        setEmailError('');
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Password validation
     if (formData.password !== formData.confirmPassword) {
       setPasswordError('Passwords do not match');
@@ -52,6 +63,7 @@ const SignupPage = () => {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
+          role: formData.role,
           designation: formData.designation,
           experience: formData.experience,
           skills: formData.skills.split(',').map(skill => skill.trim()),
@@ -68,7 +80,12 @@ const SignupPage = () => {
         navigate('/');
       } else {
         console.error('Signup error:', data);
-        setPasswordError(data.error);
+        // Set email error if the error is about existing email
+        if (data.error === 'Email already exists') {
+          setEmailError(data.error);
+        } else {
+          setPasswordError(data.error);
+        }
       }
     } catch (error) {
       console.error('Network error:', error);
@@ -81,7 +98,7 @@ const SignupPage = () => {
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
         <h2 className="text-2xl font-bold text-center mb-6">Create Your Account</h2>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="space-y-4">
           {/* Name Input */}
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -104,21 +121,33 @@ const SignupPage = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Email Address"
               required
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                emailError 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'focus:ring-blue-500'
+              }`}
             />
           </div>
+
+          {/* Email Error Message */}
+          {emailError && (
+            <p className="text-red-500 text-sm">
+              {emailError}
+            </p>
+          )}
 
           {/* Role Input */}
           <div className="relative">
             <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input 
               type="text"
-              name="role"
-              value={formData.role}
+              name="designation"
+              value={formData.designation}
               onChange={handleChange}
-              placeholder="Job Role/Title"
+              placeholder="Designation"
               required
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
