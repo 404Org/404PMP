@@ -1,46 +1,192 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Home, Bell, Folder, LogOut, Trash2, Edit, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
-const Navigation = ({ title }) => {
+const Navbar = () => {
+  const user = JSON.parse(localStorage.getItem('user'))
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const location = useLocation();
+
+  const getActiveSection = () => {
+    switch (location.pathname) {
+      case '/myprojects': return 'my_projects';
+      case '/allprojects': return 'all_projects';
+      case '/notifications': return 'notifications';
+      case '/profile': return 'null';
+      default: return 'home';
+    }
+  };
+
+  const activeSection = getActiveSection();
+
+  const toggleProfileMenu = () => {
+    setIsProfileMenuOpen(!isProfileMenuOpen);
+  };
 
   const handleLogout = () => {
+    // Clear local storage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Redirect to login page
     navigate('/');
   };
 
+  const handleDeleteAccount = () => {
+    console.log('Deleting account');
+  };
+
+  const handleEditProfile = () => {
+    navigate('/profile');
+  };
+
+  const handleMyProjects = () => {
+    setIsProfileMenuOpen(false);
+    navigate('/myprojects');
+  };
+
+  const handleAllProjects = () =>{
+    setIsProfileMenuOpen(false);
+    navigate('/allprojects');
+  }
+
+  const handleHomePage = () =>{
+    setIsProfileMenuOpen(false);
+    navigate('/home')
+  }
+  
+  const handleNotifications = () =>{
+    setIsProfileMenuOpen(false);
+  }
+
+  // useEffect(() => {
+  //   // Check if user is logged in
+  //   const token = localStorage.getItem('token');
+  //   const userData = localStorage.getItem('user');
+    
+  //   if (!token || !userData) {
+  //     navigate('/', { replace: true });
+  //     return;
+  //   }
+
+  //   try {
+  //     setUser(JSON.parse(userData));
+  //   } catch (error) {
+  //     console.error('Error parsing user data:', error);
+  //     localStorage.removeItem('token');
+  //     localStorage.removeItem('user');
+  //     navigate('/', { replace: true });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }, [navigate]);
+
+
+
+  if (!user) return null;
+
   return (
-    <nav className="bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigate('/home')}
-              className="text-gray-700 hover:text-gray-900"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-            </button>
-            <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">
-              {user?.name} ({user?.role})
-            </span>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              Logout
-            </button>
-          </div>
+    <div className="bg-gray-100 flex flex-col">
+    {/* Horizontal Navigation Bar */}
+    <nav className="bg-white shadow-md">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo or Brand */}
+        <div className="text-xl font-bold text-gray-800">Project Portal</div>
+
+        {/* Main Navigation */}
+        <div className="flex space-x-6">
+          <button 
+            onClick={handleHomePage}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'home' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Home size={20} />
+            <span>Home</span>
+          </button>
+          <button 
+            onClick={handleMyProjects}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'my_projects' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Folder size={20} />
+            <span>My Projects</span>
+          </button>
+          <button 
+            onClick={handleAllProjects}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'all_projects' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Folder size={20} />
+            <span>All Projects</span>
+          </button>
+          <button 
+            onClick={handleNotifications}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'notifications' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Bell size={20} />
+            <span>Notifications</span>
+          </button>
+        </div>
+
+        {/* Profile Section */}
+        <div className="relative">
+          <button 
+            onClick={toggleProfileMenu}
+            className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg"
+          >
+            <img 
+              src="/api/placeholder/40/40" 
+              alt="Profile" 
+              className="w-10 h-10 rounded-full"
+            />
+            <span className="text-gray-700">{user.name}</span>
+            <ChevronDown size={20} className="text-gray-500" />
+          </button>
+
+          {/* Profile Dropdown Menu */}
+          {isProfileMenuOpen && (
+            <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg border z-10">
+              <div className="p-4">
+                <div className="flex items-center space-x-3 mb-4">
+                  <img 
+                    src="/api/placeholder/50/50" 
+                    alt="Profile" 
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div>
+                    <h3 className="font-semibold">{user.name}</h3>
+                    <p className="text-sm text-gray-500">{user.email}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <button 
+                    onClick={handleEditProfile}
+                    className="w-full flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-md"
+                  >
+                    <Edit size={18} className="text-gray-500" />
+                    <span>Edit Profile</span>
+                  </button>
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-md"
+                  >
+                    <LogOut size={18} className="text-gray-500" />
+                    <span>Logout</span>
+                  </button>
+                  <button 
+                    onClick={handleDeleteAccount}
+                    className="w-full flex items-center space-x-2 p-2 hover:bg-red-50 text-red-600 rounded-md"
+                  >
+                    <Trash2 size={18} />
+                    <span>Delete Account</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </nav>
+  </div>
   );
 };
 
-export default Navigation; 
+export default Navbar;
