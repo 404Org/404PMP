@@ -11,6 +11,15 @@ import ProtectedRoutes from './components/ProtectedRoutes'
 import AllProjectsPage from './pages/AllProjectsPage'
 import MyProjectsPage from './pages/MyProjectsPage'
 import EditProfilePage from './pages/EditProfilePage'
+import ProjectList from './pages/Project';
+import ProjectDetails from './components/projects/ProjectDetails';
+import NewProject from './components/projects/NewProject';
+import EditProject from './components/projects/EditProject';
+import UserProfile from './components/users/UserProfile';
+import UserList from './components/users/UserList';
+import UserDetails from './components/users/UserDetails';
+import ProfileView from './components/users/ProfileView';
+import UserEdit from './components/users/UserEdit';
 
 function App() {
   return (
@@ -26,11 +35,20 @@ function App() {
                     </Route>
                     <Route element={<ProtectedRoutes authenticationRequired={true} />}>
                       <Route path="/home" element={<HomePage />} />
+                      <Route path="/projects" element={<ProjectList />} />
+                      <Route path="/projects/:id" element={<ProjectDetails />} />
+                      <Route path="/projects/new" element={<NewProject />} />
+                      <Route path="/projects/:id/edit" element={<EditProject />} />
                       <Route path="/logout" element={<Logout />} />
                       {/* <Route path="/coming-soon" element={<ComingSoon />} /> */}
                       <Route path="/allprojects" element={<AllProjectsPage/>} />
                       <Route path="/myprojects" element={<MyProjectsPage/>} />
                       <Route path="/profile" element={<EditProfilePage/>} />
+                      <Route path="/profile" element={<UserProfile />} />
+                      <Route path="/users" element={<UserList />} />
+                      <Route path="/users/:id" element={<UserDetails />} />
+                      <Route path="/profile/:id" element={<ProfileView />} />
+                      <Route path="/users/:id/edit" element={<UserEdit />} />
                     </Route>
                 </Routes>
             </div>
