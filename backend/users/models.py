@@ -15,6 +15,15 @@ class UserService:
             {"_id": ObjectId(user_id)},
             {"password": 0, "reset_token": 0, "reset_token_expires": 0}
         )
+    
+    
+    @staticmethod
+    def get_user_by_email(email):
+        """Retrieve a specific user by ID"""
+        return mongo.db.users.find_one(
+            {"email": email},
+            {"password": 0, "reset_token": 0, "reset_token_expires": 0}
+        )
 
     @staticmethod
     def update_user_profile(email, update_data):

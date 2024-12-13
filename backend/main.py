@@ -6,6 +6,7 @@ from shared.config import MONGO_URI, JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES
 from auth.routes import auth
 from projects.routes import projects
 from users.routes import users
+from comments.routes import comments
 from datetime import timedelta
 
 app = Flask(__name__)
@@ -24,6 +25,7 @@ jwt = JWTManager(app)
 app.register_blueprint(auth)
 app.register_blueprint(projects)
 app.register_blueprint(users)
+app.register_blueprint(comments)
 
 @app.route("/")
 def home():
