@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Bell, Folder, LogOut, Trash2, UserRound, ChevronDown } from 'lucide-react';
+import { Home, Bell, Folder, LogOut, UserRound, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -32,10 +32,6 @@ const Navbar = () => {
     localStorage.removeItem('user');
     // Redirect to login page
     navigate('/');
-  };
-
-  const handleDeleteAccount = () => {
-    console.log('Deleting account');
   };
 
   const handleEditProfile = () => {
@@ -171,13 +167,6 @@ const Navbar = () => {
                   >
                     <LogOut size={18} className="text-gray-500" />
                     <span>Logout</span>
-                  </button>
-                  <button 
-                    onClick={handleDeleteAccount}
-                    className="w-full flex items-center space-x-2 p-2 hover:bg-red-50 text-red-600 rounded-md"
-                  >
-                    <Trash2 size={18} />
-                    <span>Delete Account</span>
                   </button>
                 </div>
               </div>
