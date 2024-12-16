@@ -6,7 +6,6 @@ const SignupPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    role: '',
     designation: '',
     experience: '',
     skills: '',
@@ -63,7 +62,6 @@ const SignupPage = () => {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          role: formData.role,
           designation: formData.designation,
           experience: formData.experience,
           skills: formData.skills.split(',').map(skill => skill.trim()),
