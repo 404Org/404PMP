@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar';
+import Comments from '../comments/Comments';
 
 const ProjectDetails = () => {
   const [project, setProject] = useState(null);
@@ -118,6 +119,8 @@ const ProjectDetails = () => {
               </div>
             </div>
           </div>
+          
+          <Comments projectId={id} />
         </div>
       </div>
     </div>

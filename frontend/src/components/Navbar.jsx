@@ -45,7 +45,7 @@ const Navbar = () => {
 
   const handleAllProjects = () =>{
     setIsProfileMenuOpen(false);
-    navigate('/allprojects');
+    navigate('/projects');
   }
 
   const handleHomePage = () =>{
@@ -129,11 +129,16 @@ const Navbar = () => {
             onClick={toggleProfileMenu}
             className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg"
           >
-            <img 
+            {/* <img 
               src="/api/placeholder/40/40" 
               alt="Profile" 
               className="w-10 h-10 rounded-full"
-            />
+            /> */}
+            <div className="flex-shrink-0">
+          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
+            {user.name?.charAt(0).toUpperCase()}
+          </div>
+        </div>
             <span className="text-gray-700">{user.name}</span>
             <ChevronDown size={20} className="text-gray-500" />
           </button>
