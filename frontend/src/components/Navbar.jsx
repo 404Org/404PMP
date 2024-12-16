@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Bell, Folder, LogOut, Trash2, Edit, ChevronDown } from 'lucide-react';
+import { Home, Bell, Folder, LogOut, UserRound, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -8,13 +8,14 @@ const Navbar = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const avatar = null;
+  
   const getActiveSection = () => {
     switch (location.pathname) {
       case '/myprojects': return 'my_projects';
       case '/allprojects': return 'all_projects';
       case '/notifications': return 'notifications';
-      case '/profile': return 'null';
+      case '/viewprofile': return 'null';
       default: return 'home';
     }
   };
@@ -33,12 +34,8 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const handleDeleteAccount = () => {
-    console.log('Deleting account');
-  };
-
   const handleEditProfile = () => {
-    navigate('/profile');
+    navigate('/viewprofile');
   };
 
   const handleMyProjects = () => {
@@ -166,8 +163,8 @@ const Navbar = () => {
                     onClick={handleEditProfile}
                     className="w-full flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-md"
                   >
-                    <Edit size={18} className="text-gray-500" />
-                    <span>Edit Profile</span>
+                    <UserRound size={18} className="text-gray-500" />
+                    <span>View Profile</span>
                   </button>
                   <button 
                     onClick={handleLogout}
@@ -175,13 +172,6 @@ const Navbar = () => {
                   >
                     <LogOut size={18} className="text-gray-500" />
                     <span>Logout</span>
-                  </button>
-                  <button 
-                    onClick={handleDeleteAccount}
-                    className="w-full flex items-center space-x-2 p-2 hover:bg-red-50 text-red-600 rounded-md"
-                  >
-                    <Trash2 size={18} />
-                    <span>Delete Account</span>
                   </button>
                 </div>
               </div>

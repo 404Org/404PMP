@@ -6,39 +6,88 @@ import {
     FileText,
     Star,
     Camera,
-    Trash2
+    Check,
+    Loader2
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
+//import { useLocation } from 'react-router-dom';
+import { useUserContext } from '../hooks/UserContext';
 
 const UserProfileEdit = () => {
+
+    const navigate = useNavigate();
+    //const location = useLocation();
+    //const { userData, updateUserData} = location.state || {};
+    const { userData, setUserData } = useUserContext();
+    const [error, setError] = useState('');
+    const [isSaved, setIsSaved] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [profileData, setProfileData] = useState({
-        name: '',
-        email: '',
-        role: '',
-        bio: '',
-        experience: '',
-        skills: '',
+        name: userData.name,
+        email: userData.email,
+        designation: userData.designation,
+        bio: userData.bio,
+        experience: userData.experience,
+        skills: userData.skills,
         avatar: null,
     });
 
-    const handleInputChange = (e) => {
-        const { name, value, files } = e.target;
-        setProfileData((prevState) => ({
-            ...prevState,
-            [name]: files ? files[0] : value,
-        }));
-    };
 
-    const handleSubmit = (e) => {
+    // const handleInputChange = (e) => {
+    //     const { name, value, files } = e.target;
+    //     setProfileData((prevState) => ({
+    //         ...prevState,
+    //         [name]: files ? files[0] : value,
+    //     }));
+    // };
+    
+    
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     console.log('Profile Updated:', profileData);
+    // };
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Profile Updated:', profileData);
-    };
-
-    const handleDeleteAccount = () => {
-        const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
-        if (confirmDelete) {
-            console.log('Account Deleted');
+        setIsLoading(true);
+        try {
+          const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/profile`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(profileData)
+          });
+    
+          if (response.ok) {
+            const updatedUser = await response.json();
+            setUserData(updatedUser);
+            setIsSaved(true);
+            setTimeout(() => {
+                setIsSaved(false);
+            }, 3000);
+          } else {
+            const data = await response.json();
+            setError(data.error || 'Failed to update profile');
+          }
+        } catch (error) {
+          setError('An error occurred while updating profile');
+        } finally {
+            setIsLoading(false); 
         }
+      };
+
+    // const handleDeleteAccount = () => {
+    //     const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+    //     if (confirmDelete) {
+    //         console.log('Account Deleted');
+    //     }
+    // };
+
+    const handleCancelButton = () => {
+        setIsSaved(false);
+        navigate('/viewprofile')        
     };
 
     return (
@@ -49,7 +98,7 @@ const UserProfileEdit = () => {
             </div>
 
             {/* Main Content */}
-            <div className="pt-20 flex justify-center items-center">
+            <div className="pt-24 flex justify-center items-center">
                 <div className="bg-white shadow-md rounded-lg w-full max-w-2xl p-8">
                     <h2 className="text-3xl font-bold text-center mb-6">Edit Profile</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -60,7 +109,7 @@ const UserProfileEdit = () => {
                                     type="file"
                                     name="avatar"
                                     accept="image/*"
-                                    onChange={handleInputChange}
+                                    //onChange={handleInputChange}
                                     className="hidden"
                                 />
                                 <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center relative">
@@ -89,7 +138,7 @@ const UserProfileEdit = () => {
                                     type="text"
                                     name="name"
                                     value={profileData.name}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                                     placeholder="Enter your full name"
                                     className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -106,23 +155,23 @@ const UserProfileEdit = () => {
                                     type="email"
                                     name="email"
                                     value={profileData.email}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter your email"
+                                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                                    disabled
                                     className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
                         </div>
 
-                        {/* Role */}
+                        {/* Designation */}
                         <div className="relative">
-                            <label className="block text-gray-700 mb-2">Professional Role</label>
+                            <label className="block text-gray-700 mb-2">Professional Designation</label>
                             <div className="relative">
                                 <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                                 <input
                                     type="text"
-                                    name="role"
-                                    value={profileData.role}
-                                    onChange={handleInputChange}
+                                    name="designation"
+                                    value={profileData.designation}
+                                    onChange={(e) => setProfileData({ ...profileData, designation: e.target.value })}
                                     placeholder="Your job title or role"
                                     className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -137,7 +186,7 @@ const UserProfileEdit = () => {
                                     type="text"
                                     name="experience"
                                     value={profileData.experience}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => setProfileData({ ...profileData, experience: e.target.value })}
                                     placeholder="Years of professional experience"
                                     className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -153,7 +202,7 @@ const UserProfileEdit = () => {
                                     type="text"
                                     name="skills"
                                     value={profileData.skills}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => setProfileData({ ...profileData, skills: e.target.value })}
                                     placeholder="List your skills (comma-separated)"
                                     className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -168,7 +217,7 @@ const UserProfileEdit = () => {
                                 <textarea
                                     name="bio"
                                     value={profileData.bio}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
                                     placeholder="Write a short professional bio"
                                     rows={4}
                                     className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -179,17 +228,34 @@ const UserProfileEdit = () => {
                         <div className="flex justify-between items-center">
                             <button
                                 type="submit"
-                                className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                                
+                                className={`
+                                    flex items-center justify-center 
+                                    w-[150px] 
+                                    ${isLoading ? 'bg-blue-400' : 'bg-blue-500'} 
+                                    ${isSaved ? 'bg-green-500' : ''} 
+                                    text-white 
+                                    px-6 py-2 
+                                    rounded-md 
+                                    hover:bg-blue-600 
+                                    transition duration-300
+                                    disabled:cursor-not-allowed
+                                `}
                             >
-                                Save Changes
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 animate-spin" size={20} />
+                                        Saving...
+                                    </>
+                                ) : isSaved ?  'Saved' : 'Save Changes'}
                             </button>
                             <button
                                 type="button"
-                                onClick={handleDeleteAccount}
-                                className="flex items-center text-red-600 hover:text-red-700 transition duration-300"
+                                onClick={handleCancelButton}
+                                disabled={isLoading}
+                                className=" bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
                             >
-                                <Trash2 className="mr-2" size={20} />
-                                Delete Account
+                                Cancel
                             </button>
                         </div>
                     </form>
