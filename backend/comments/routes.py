@@ -6,6 +6,17 @@ from marshmallow import ValidationError
 
 comments = Blueprint("comments", __name__)
 
+@comments.route("/projects/<project_id>/comments", methods=["GET"])
+@jwt_required()
+def get_project_comments(project_id):
+    try:
+        comments = Comment.get_comments_by_project(project_id)
+        return jsonify({"comments": comments or []}), 200
+        
+    except Exception as e:
+        print(f"Error fetching comments: {str(e)}")
+        return jsonify({"error": str(e), "comments": []}), 500
+
 @comments.route("/projects/<project_id>/comments", methods=["POST"])
 @jwt_required()
 def create_comment(project_id):
@@ -36,23 +47,6 @@ def create_comment(project_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@comments.route("/projects/<project_id>/comments", methods=["GET"])
-@jwt_required()
-def get_project_comments(project_id):
-    try:
-        comments = Comment.get_comments_by_project(project_id)
-        
-        # Convert ObjectIds to strings for JSON serialization
-        for comment in comments:
-            comment['_id'] = str(comment['_id'])
-            comment['project_id'] = str(comment['project_id'])
-            comment['user_id'] = str(comment['user_id'])
-            
-        return jsonify({"comments": comments}), 200
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 @comments.route("/comments/<comment_id>", methods=["DELETE"])
 @jwt_required()
 def delete_comment(comment_id):
@@ -63,14 +57,20 @@ def delete_comment(comment_id):
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        result = Comment.delete_comment(comment_id, str(user['_id']))
-        
-        if result.deleted_count == 0:
-            return jsonify({
-                "error": "Comment not found or you're not authorized to delete it"
-            }), 404
+        # Get the comment first
+        comment = Comment.get_comment(comment_id)
+        if not comment:
+            return jsonify({"error": "Comment not found"}), 404
+
+        # Admin/project manager can delete any comment, users can only delete their own
+        if user.get('role') in ['admin', 'project_manager'] or str(user['_id']) == str(comment['user_id']):
+            result = Comment.delete_comment(comment_id)
+            if result.deleted_count > 0:
+                return jsonify({"message": "Comment deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Unauthorized to delete this comment"}), 403
             
-        return jsonify({"message": "Comment deleted successfully"}), 200
+        return jsonify({"error": "Failed to delete comment"}), 400
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -80,13 +80,119 @@ def delete_comment(comment_id):
 def update_comment(comment_id):
     try:
         data = request.get_json()
-        # Validate the input data
-        validated_data = Comment.schema.load(data, partial=True)
-        result = Comment.update_comment(comment_id, validated_data)
+        current_user_email = get_jwt_identity()
+        user = UserService.get_user_by_email(current_user_email)
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Get the comment first
+        comment = Comment.get_comment(comment_id)
+        if not comment:
+            return jsonify({"error": "Comment not found"}), 404
+
+        # Only comment owner can update their comment
+        if str(user['_id']) == str(comment['user_id']):
+            result = Comment.update_comment(comment_id, str(user['_id']), data.get('text'))
+            if result.modified_count > 0:
+                return jsonify({"message": "Comment updated successfully"}), 200
+        else:
+            return jsonify({"error": "Unauthorized to update this comment"}), 403
+            
+        return jsonify({"error": "Failed to update comment"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@comments.route("/comments/<comment_id>/replies", methods=["POST"])
+@jwt_required()
+def add_reply(comment_id):
+    try:
+        data = request.get_json()
+        current_user_email = get_jwt_identity()
+        
+        user = UserService.get_user_by_email(current_user_email)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        result = Comment.add_reply(
+            comment_id=comment_id,
+            user_id=str(user['_id']),
+            text=data.get('text'),
+            user_data=user
+        )
+        
         if result.modified_count == 0:
             return jsonify({"error": "Comment not found"}), 404
-        return jsonify({"message": "Comment updated successfully"}), 200
-    except ValidationError as err:
-        return jsonify({"errors": err.messages}), 400
+            
+        return jsonify({"message": "Reply added successfully"}), 201
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@comments.route("/comments/<comment_id>/replies/<reply_id>", methods=["DELETE"])
+@jwt_required()
+def delete_reply(comment_id, reply_id):
+    try:
+        current_user_email = get_jwt_identity()
+        user = UserService.get_user_by_email(current_user_email)
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Get the comment first
+        comment = Comment.get_comment(comment_id)
+        if not comment:
+            return jsonify({"error": "Comment not found"}), 404
+
+        # Find the specific reply
+        reply = next((r for r in comment.get('replies', []) if r['id'] == reply_id), None)
+        if not reply:
+            return jsonify({"error": "Reply not found"}), 404
+
+        # Admin/project manager can delete any reply, users can only delete their own
+        if user.get('role') in ['admin', 'project_manager'] or str(user['_id']) == str(reply['user_id']):
+            result = Comment.delete_reply(comment_id, reply_id, str(user['_id']))
+            if result.modified_count > 0:
+                return jsonify({"message": "Reply deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Unauthorized to delete this reply"}), 403
+            
+        return jsonify({"error": "Failed to delete reply"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@comments.route("/comments/<comment_id>/replies/<reply_id>", methods=["PUT"])
+@jwt_required()
+def update_reply(comment_id, reply_id):
+    try:
+        data = request.get_json()
+        current_user_email = get_jwt_identity()
+        user = UserService.get_user_by_email(current_user_email)
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Get the comment first
+        comment = Comment.get_comment(comment_id)
+        if not comment:
+            return jsonify({"error": "Comment not found"}), 404
+
+        # Find the specific reply
+        reply = next((r for r in comment.get('replies', []) if r['id'] == reply_id), None)
+        if not reply:
+            return jsonify({"error": "Reply not found"}), 404
+
+        # Only reply owner can update their reply
+        if str(user['_id']) == str(reply['user_id']):
+            result = Comment.update_reply(comment_id, reply_id, str(user['_id']), data.get('text'))
+            if result.modified_count > 0:
+                return jsonify({"message": "Reply updated successfully"}), 200
+        else:
+            return jsonify({"error": "Unauthorized to update this reply"}), 403
+            
+        return jsonify({"error": "Failed to update reply"}), 400
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
