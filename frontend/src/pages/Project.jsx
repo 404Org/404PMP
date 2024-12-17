@@ -68,10 +68,11 @@ const ProjectList = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar title="Projects" />
+      <Navbar />
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-6">
+          {/* <div className="flex justify-between items-center mb-6"> */}
+          <div className="bg-white p-6 rounded-lg shadow-md flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
             {user?.role === 'admin' && (
               <button
@@ -81,7 +82,8 @@ const ProjectList = () => {
                 New Project
               </button>
             )}
-          </div>
+            </div>
+          {/* </div> */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => (

@@ -13,9 +13,10 @@ const Navbar = () => {
   const getActiveSection = () => {
     switch (location.pathname) {
       case '/myprojects': return 'my_projects';
-      case '/allprojects': return 'all_projects';
+      case '/projects': return 'all_projects';
       case '/notifications': return 'notifications';
       case '/viewprofile': return 'null';
+      case '/users': return 'users';
       default: return 'home';
     }
   };
@@ -53,6 +54,11 @@ const Navbar = () => {
     navigate('/home')
   }
   
+  const handleViewUsers = () =>{
+    setIsProfileMenuOpen(false);
+    navigate('/users');
+  }
+
   const handleNotifications = () =>{
     setIsProfileMenuOpen(false);
   }
@@ -100,6 +106,7 @@ const Navbar = () => {
             <Home size={20} />
             <span>Home</span>
           </button>
+
           <button 
             onClick={handleMyProjects}
             className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'my_projects' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -107,6 +114,7 @@ const Navbar = () => {
             <Folder size={20} />
             <span>My Projects</span>
           </button>
+
           <button 
             onClick={handleAllProjects}
             className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'all_projects' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -114,6 +122,17 @@ const Navbar = () => {
             <Folder size={20} />
             <span>All Projects</span>
           </button>
+          
+          {user?.role === 'admin' && (
+          <button 
+            onClick={handleViewUsers}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'users' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <UserRound size={20} />
+            <span>Users</span>
+          </button>
+          )}
+
           <button 
             onClick={handleNotifications}
             className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'notifications' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}

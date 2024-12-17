@@ -6,7 +6,6 @@ import {
     FileText,
     Star,
     Camera,
-    Check,
     Loader2
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -41,12 +40,7 @@ const UserProfileEdit = () => {
     //         [name]: files ? files[0] : value,
     //     }));
     // };
-    
-    
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     console.log('Profile Updated:', profileData);
-    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -77,6 +71,7 @@ const UserProfileEdit = () => {
             setIsLoading(false); 
         }
       };
+      
 
     // const handleDeleteAccount = () => {
     //     const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
@@ -98,7 +93,7 @@ const UserProfileEdit = () => {
             </div>
 
             {/* Main Content */}
-            <div className="pt-24 flex justify-center items-center">
+            <div className="pt-24 flex justify-center items-center pb-8">
                 <div className="bg-white shadow-md rounded-lg w-full max-w-2xl p-8">
                     <h2 className="text-3xl font-bold text-center mb-6">Edit Profile</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -144,8 +139,7 @@ const UserProfileEdit = () => {
                                 />
                             </div>
                         </div>
-
-                        {/* Additional Inputs */}
+                        
                         {/* Email */}
                         <div className="relative">
                             <label className="block text-gray-700 mb-2">Email Address</label>
