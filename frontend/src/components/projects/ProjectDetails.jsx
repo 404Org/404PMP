@@ -107,14 +107,22 @@ const ProjectDetails = () => {
               <div>
                 <h2 className="text-xl font-semibold mb-2">Team Members</h2>
                 <div className="grid grid-cols-2 gap-4">
-                  {project.team_members.map((member, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                        {member.charAt(0).toUpperCase()}
-                      </div>
-                      <span>{member}</span>
-                    </div>
-                  ))}
+                  {project.team_members.map((member, index) => {
+                    if (typeof member === 'string') {
+                      const firstChar = member.charAt(0);
+                      return (
+                        <div key={index} className="flex items-center space-x-2">
+                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                            {firstChar.toUpperCase()}
+                          </div>
+                          <span>{member}</span>
+                        </div>
+                      );
+                    } else {
+                      console.error('Expected a string but got:', member);
+                      return null;
+                    }
+                  })}
                 </div>
               </div>
             </div>

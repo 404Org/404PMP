@@ -67,7 +67,7 @@ const ViewProfilePage = () => {
             </div>
 
             {/* Main Content */}
-            <div className="pt-24 flex justify-center items-center">
+            <div className="pt-24 flex justify-center items-center pb-8">
                 {loading ? (
                     <div className="text-center">
                         <p>Loading...</p>

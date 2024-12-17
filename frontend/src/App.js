@@ -18,7 +18,6 @@ import EditProject from './components/projects/EditProject';
 import ViewProfilePage from './pages/ViewProfilePage'
 import UserList from './components/users/UserList';
 import UserDetails from './components/users/UserDetails';
-import ProfileView from './components/users/ProfileView';
 import UserEdit from './components/users/UserEdit';
 // import ProfilePage from './pages/ProfilePage';
 import { UserProvider } from './hooks/UserContext';
@@ -47,10 +46,8 @@ function App() {
                 <Route path="/myprojects" element={<MyProjectsPage />} />
                 <Route path="/editprofile" element={<EditProfilePage />} />
                 <Route path="/viewprofile" element={<ViewProfilePage />} />
-                {/* <Route path="/profile" element={<ProfilePage/>} /> */}
                 <Route path="/users" element={<UserList />} />
                 <Route path="/users/:id" element={<UserDetails />} />
-                <Route path="/profile/:id" element={<ProfileView />} />
                 <Route path="/users/:id/edit" element={<UserEdit />} />
               </Route>
             </Routes>

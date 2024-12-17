@@ -69,7 +69,7 @@ const UserList = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar title="User Management" />
+      <Navbar/>
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
