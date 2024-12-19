@@ -108,10 +108,11 @@ const ProjectDetails = () => {
 
           {/* Right Section */}
           <div className="flex flex-col gap-6 flex-[0.8] mr-60">
+
             {/* Team Members Card */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h1 className="text-xl font-semibold mb-4">Team Members</h1>
-              <div className="space-y-4">
+              <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
                 {project.team_members.map((member, index) => {
                   if (typeof member.name === 'string') {
                     const firstChar = member.name.charAt(0);
@@ -133,24 +134,24 @@ const ProjectDetails = () => {
 
             {/* Tech Stack */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <div>
-                  <h2 className="text-xl font-semibold mb-2">Tech Stack</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech_stack.map((tech, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
+              <h1 className="text-xl font-semibold mb-4">Tech Stack</h1>
+              <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {project.tech_stack.map((tech, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                    >
+                      {tech}
+                    </span>
+                  ))}
                 </div>
+              </div>
             </div>
 
             {/* Additional Info Card */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <KnowledgeBaseManager/>
+              <KnowledgeBaseManager />
             </div>
           </div>
         </div>
