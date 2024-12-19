@@ -8,6 +8,7 @@ from projects.routes import projects
 from users.routes import users
 from comments.routes import comments
 from datetime import timedelta
+from notifications.routes import notifications
 
 app = Flask(__name__)
 CORS(app)
@@ -26,6 +27,7 @@ app.register_blueprint(auth)
 app.register_blueprint(projects)
 app.register_blueprint(users)
 app.register_blueprint(comments)
+app.register_blueprint(notifications)
 
 @app.route("/")
 def home():

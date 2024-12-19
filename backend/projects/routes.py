@@ -3,6 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from projects.models import Project
 from marshmallow import ValidationError
 from bson import ObjectId
+from users.models import UserService
+from notifications.models import Notification
 
 projects = Blueprint("projects", __name__)
 
@@ -13,11 +15,47 @@ def create_project():
         data = request.get_json()
         current_user = get_jwt_identity()
         
+        # Convert team member IDs to full user details
+        team_member_details = []
+        for member_id in data.get('team_members', []):
+            user = UserService.get_user_by_id(member_id)
+            if user:
+                team_member_details.append({
+                    'user_id': str(user['_id']),
+                    'email': user['email'],
+                    'name': user['name']
+                })
+        
+        # Get project manager details
+        pm_id = data.get('project_manager')
+        if pm_id:
+            pm_user = UserService.get_user_by_id(pm_id)
+            if pm_user:
+                data['project_manager'] = {
+                    'user_id': str(pm_user['_id']),
+                    'email': pm_user['email'],
+                    'name': pm_user['name']
+                }
+            else:
+                return jsonify({"error": "Project manager not found"}), 404
+        
+        # Replace team_members array with detailed information
+        data['team_members'] = team_member_details
+        
         # Validate project data
         validated_data = Project.schema.load(data)
         
         # Create project
         project_id = Project.create_project(validated_data)
+        
+        # Notify team members about new project
+        for member in team_member_details:
+            Notification.create_notification(
+                member['user_id'],
+                'new_project',
+                f"New project '{validated_data['title']}' has been created",
+                project_id
+            )
         
         return jsonify({
             "message": "Project created successfully",
@@ -73,6 +111,60 @@ def get_project(project_id):
 def update_project(project_id):
     try:
         data = request.get_json()
+        
+        # If team_members are being updated
+        if 'team_members' in data:
+            # Convert team member IDs to full user details
+            team_member_details = []
+            for member_id in data.get('team_members', []):
+                user = UserService.get_user_by_id(member_id)
+                if user:
+                    team_member_details.append({
+                        'user_id': str(user['_id']),
+                        'email': user['email'],
+                        'name': user['name']
+                    })
+            data['team_members'] = team_member_details
+
+        # If project_manager is being updated
+        if 'project_manager' in data:
+            pm_id = data.get('project_manager')
+            if pm_id:
+                pm_user = UserService.get_user_by_id(pm_id)
+                if pm_user:
+                    data['project_manager'] = {
+                        'user_id': str(pm_user['_id']),
+                        'email': pm_user['email'],
+                        'name': pm_user['name']
+                    }
+                else:
+                    return jsonify({"error": "Project manager not found"}), 404
+            
+        # Get existing project to compare team members
+        existing_project = Project.get_project_by_id(project_id)
+        if existing_project:
+            existing_member_ids = {member['user_id'] for member in existing_project.get('team_members', [])}
+            new_member_ids = {member['user_id'] for member in team_member_details}
+            
+            # Notify new team members
+            for member in team_member_details:
+                if member['user_id'] not in existing_member_ids:
+                    Notification.create_notification(
+                        member['user_id'],
+                        'added_to_project',
+                        f"You have been added to project '{existing_project['title']}'",
+                        project_id
+                    )
+            
+            # Notify removed members
+            for member in existing_project.get('team_members', []):
+                if member['user_id'] not in new_member_ids:
+                    Notification.create_notification(
+                        member['user_id'],
+                        'removed_from_project',
+                        f"You have been removed from project '{existing_project['title']}'",
+                        project_id
+                    )
         
         # Validate update data
         validated_data = Project.schema.load(data, partial=True)
