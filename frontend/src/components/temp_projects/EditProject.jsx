@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ProjectForm from './ProjectForm';
 import Navbar from '../Navbar';
 
@@ -8,6 +8,11 @@ const EditProject = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProject();
+  }, [id]);
 
   const fetchProject = async () => {
     try {
@@ -32,10 +37,6 @@ const EditProject = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchProject();
-  }, [id]);
 
   const handleSubmit = async (formData) => {
     const token = localStorage.getItem('token');

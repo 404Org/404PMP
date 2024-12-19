@@ -3,10 +3,8 @@ import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import HomePage from './pages/HomePage'
-//import Logout from './components/LogOut'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-// import ComingSoon from './components/ComingSoon';
 import ProtectedRoutes from './components/ProtectedRoutes'
 import AllProjectsPage from './pages/AllProjectsPage'
 import MyProjectsPage from './pages/MyProjectsPage'
@@ -19,8 +17,9 @@ import ViewProfilePage from './pages/ViewProfilePage'
 import UserList from './components/users/UserList';
 import UserDetails from './components/users/UserDetails';
 import UserEdit from './components/users/UserEdit';
-// import ProfilePage from './pages/ProfilePage';
 import { UserProvider } from './hooks/UserContext';
+
+import Cards from './pages/Cards';
 
 function App() {
   return (
@@ -41,7 +40,6 @@ function App() {
                 <Route path="/projects/:id" element={<ProjectDetails />} />
                 <Route path="/projects/new" element={<NewProject />} />
                 <Route path="/projects/:id/edit" element={<EditProject />} />
-                {/* <Route path="/coming-soon" element={<ComingSoon />} /> */}
                 <Route path="/allprojects" element={<AllProjectsPage />} />
                 <Route path="/myprojects" element={<MyProjectsPage />} />
                 <Route path="/editprofile" element={<EditProfilePage />} />
@@ -49,6 +47,7 @@ function App() {
                 <Route path="/users" element={<UserList />} />
                 <Route path="/users/:id" element={<UserDetails />} />
                 <Route path="/users/:id/edit" element={<UserEdit />} />
+                <Route path="/cards" element={<Cards />} />
               </Route>
             </Routes>
           </div>
