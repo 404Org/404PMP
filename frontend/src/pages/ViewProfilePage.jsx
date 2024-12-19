@@ -42,7 +42,7 @@ const ViewProfilePage = () => {
         };
 
         fetchUserData();
-    }, [userId]);
+    }, [userId,setUserData]);
 
     const handleEditProfile = () => {
         navigate('/editprofile');

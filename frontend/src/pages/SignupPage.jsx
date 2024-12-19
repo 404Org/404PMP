@@ -44,6 +44,12 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if the form is valid
+    if (!e.target.checkValidity()) {
+      e.target.reportValidity(); // This will show the required messages
+      return; // Prevent submission if the form is invalid
+    }
+
     // Password validation
     if (formData.password !== formData.confirmPassword) {
       setPasswordError('Passwords do not match');
@@ -96,7 +102,7 @@ const SignupPage = () => {
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
         <h2 className="text-2xl font-bold text-center mb-6">Create Your Account</h2>
         
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Name Input */}
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -234,7 +240,6 @@ const SignupPage = () => {
           {/* Submit Button */}
           <button 
             type="submit" 
-            onClick={handleSubmit}
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
             Create Account
