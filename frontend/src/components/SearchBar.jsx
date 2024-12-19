@@ -33,7 +33,7 @@ const SearchBar = () => {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    
+
     if (value.trim() === '') {
       setShowResults(false);
       return;
@@ -46,11 +46,11 @@ const SearchBar = () => {
         // Search by project title
         project.title.toLowerCase().includes(searchValue) ||
         // Search by tech stack
-        project.tech_stack.some(tech => 
+        project.tech_stack.some(tech =>
           tech.toLowerCase().includes(searchValue)
         ) ||
         // Search by team members
-        project.team_members.some(member => 
+        project.team_members.some(member =>
           member.toLowerCase().includes(searchValue)
         )
       );
@@ -104,7 +104,7 @@ const SearchBar = () => {
               onChange={handleSearchChange}
             />
             <button className="outline-none text-gray-500 bg-gray-100 rounded-r-full pr-4">
-              <Search size={20}/>
+              <Search size={20} />
             </button>
           </div>
 
@@ -122,7 +122,16 @@ const SearchBar = () => {
                     {project.tech_stack.join(", ")}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
-                    Team: {project.team_members.join(", ")}
+                    Team: {project.team_members.map((member, index) => {
+                      if (typeof member.name === 'string') {
+                        return (
+                          <span>{member.name}, </span>
+                        );
+                      } else {
+                        console.error('Expected a string but got:', member);
+                        return null;
+                      }
+                    })}
                   </div>
                 </div>
               ))}
