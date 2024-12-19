@@ -187,38 +187,39 @@ const Comments = ({ projectId }) => {
   }
 
   return (
-    <div className="mt-8">
+    <div>
       <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+      <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
+        <AddComment
+          projectId={projectId}
+          onCommentAdded={fetchComments}
+          replyTo={replyTo}
+          onCancelReply={() => setReplyTo(null)}
+          user={user}
+        />
 
-      <AddComment
-        projectId={projectId}
-        onCommentAdded={fetchComments}
-        replyTo={replyTo}
-        onCancelReply={() => setReplyTo(null)}
-        user={user}
-      />
-
-      <div className="space-y-4">
-        {comments && comments.length > 0 ? (
-          comments.map((comment) => (
-            <CommentItem
-              key={comment._id}
-              comment={comment}
-              onDelete={handleDeleteComment}
-              onUpdate={handleUpdateComment}
-              onReply={handleAddReply}
-              onDeleteReply={handleDeleteReply}
-              onUpdateReply={handleUpdateReply}
-              user={user}
-              canModify={canModifyComment(comment)}
-              canDelete={canDeleteComment(comment)}
-              canModifyReply={canModifyReply}
-              canDeleteReply={canDeleteReply}
-            />
-          ))
-        ) : (
-          <div className="text-center text-gray-500">No comments yet</div>
-        )}
+        <div className="space-y-4">
+          {comments && comments.length > 0 ? (
+            comments.map((comment) => (
+              <CommentItem
+                key={comment._id}
+                comment={comment}
+                onDelete={handleDeleteComment}
+                onUpdate={handleUpdateComment}
+                onReply={handleAddReply}
+                onDeleteReply={handleDeleteReply}
+                onUpdateReply={handleUpdateReply}
+                user={user}
+                canModify={canModifyComment(comment)}
+                canDelete={canDeleteComment(comment)}
+                canModifyReply={canModifyReply}
+                canDeleteReply={canDeleteReply}
+              />
+            ))
+          ) : (
+            <div className="text-center text-gray-500">No comments yet</div>
+          )}
+        </div>
       </div>
     </div>
   );

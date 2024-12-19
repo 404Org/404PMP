@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar';
 import Comments from '../comments/Comments';
+import KnowledgeBaseManager from '../KnowledgeBase';
 
 const ProjectDetails = () => {
   const [project, setProject] = useState(null);
@@ -21,7 +22,7 @@ const ProjectDetails = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${id}`, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
@@ -47,51 +48,94 @@ const ProjectDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar title="Project Details" />
-      <div className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-start mb-6">
-              <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
-              {user?.role === 'admin' && (
-                <button
-                  onClick={() => navigate(`/projects/${id}/edit`)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Edit Project
-                </button>
-              )}
+      <Navbar />
+      <div className="py-8 mx-auto">
+        <div className="flex max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 gap-6 ">
+          {/* Left Section: Project Details */}
+          <div className="flex-[2] space-y-6">
+            {/* Project Card */}
+            <div className="bg-white rounded-lg shadow-md p-6 ml-60">
+              <div className="flex justify-between items-start mb-6">
+                <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={() => navigate(`/projects/${id}/edit`)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Edit Project
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                {/* Description */}
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Description</h2>
+                  <p className="text-gray-700">{project.description}</p>
+                </div>
+
+                {/* Status and Timeline */}
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">Status</h2>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${project.status === 'completed'
+                        ? 'bg-green-100 text-green-800'
+                        : project.status === 'in_progress'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                    >
+                      {project.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">Timeline</h2>
+                    <p className="text-gray-700">
+                      {new Date(project.start_date).toLocaleDateString()} -{' '}
+                      {new Date(project.end_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Description</h2>
-                <p className="text-gray-700">{project.description}</p>
+            {/* Comments Section */}
+            <div className="bg-white rounded-lg shadow-md p-8 ml-60">
+              <Comments projectId={id} />
+            </div>
+          </div>
+
+          {/* Right Section */}
+          <div className="flex flex-col gap-6 flex-[0.8] mr-60">
+
+            {/* Team Members Card */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h1 className="text-xl font-semibold mb-4">Team Members</h1>
+              <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
+                {project.team_members.map((member, index) => {
+                  if (typeof member.name === 'string') {
+                    const firstChar = member.name.charAt(0);
+                    return (
+                      <div key={index} className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                          {firstChar.toUpperCase()}
+                        </div>
+                        <span className="text-gray-700 text-base">{member.name}</span>
+                      </div>
+                    );
+                  } else {
+                    console.error('Expected a string but got:', member);
+                    return null;
+                  }
+                })}
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">Status</h2>
-                  <span className={`px-3 py-1 rounded-full text-sm ${
-                    project.status === 'completed' ? 'bg-green-100 text-green-800' :
-                    project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                    'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {project.status.replace('_', ' ')}
-                  </span>
-                </div>
-
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">Timeline</h2>
-                  <p className="text-gray-700">
-                    {new Date(project.start_date).toLocaleDateString()} - 
-                    {new Date(project.end_date).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Tech Stack</h2>
+            {/* Tech Stack */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h1 className="text-xl font-semibold mb-4">Tech Stack</h1>
+              <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
                 <div className="flex flex-wrap gap-2">
                   {project.tech_stack.map((tech, index) => (
                     <span
@@ -103,36 +147,17 @@ const ProjectDetails = () => {
                   ))}
                 </div>
               </div>
+            </div>
 
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Team Members</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {project.team_members.map((member, index) => {
-                    if (typeof member === 'string') {
-                      const firstChar = member.charAt(0);
-                      return (
-                        <div key={index} className="flex items-center space-x-2">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                            {firstChar.toUpperCase()}
-                          </div>
-                          <span>{member}</span>
-                        </div>
-                      );
-                    } else {
-                      console.error('Expected a string but got:', member);
-                      return null;
-                    }
-                  })}
-                </div>
-              </div>
+            {/* Additional Info Card */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <KnowledgeBaseManager />
             </div>
           </div>
-          
-          <Comments projectId={id} />
         </div>
       </div>
     </div>
   );
 };
 
-export default ProjectDetails; 
+export default ProjectDetails;
