@@ -11,13 +11,13 @@ const ProjectDetails = () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
-
+ 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
     setUser(userData);
     fetchProject();
   }, [id]);
-
+ 
   const fetchProject = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -27,11 +27,11 @@ const ProjectDetails = () => {
           'Content-Type': 'application/json'
         }
       });
-
+ 
       if (!response.ok) {
         throw new Error('Failed to fetch project details');
       }
-
+ 
       const data = await response.json();
       setProject(data.project);
     } catch (err) {
@@ -41,11 +41,11 @@ const ProjectDetails = () => {
       setIsLoading(false);
     }
   };
-
+ 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-600">{error}</div>;
   if (!project) return <div className="text-center mt-8">Project not found</div>;
-
+ 
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -159,5 +159,5 @@ const ProjectDetails = () => {
     </div>
   );
 };
-
+ 
 export default ProjectDetails;

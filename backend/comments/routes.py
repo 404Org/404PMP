@@ -3,6 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from comments.models import Comment
 from users.models import UserService
 from marshmallow import ValidationError
+from projects.models import Project
+from notifications.models import Notification
 
 comments = Blueprint("comments", __name__)
 
@@ -30,21 +32,57 @@ def create_comment(project_id):
             return jsonify({"error": "User not found"}), 404
 
         # Create the comment
-        comment_id = Comment.create_comment(
-            project_id=project_id,
-            user_id=str(user['_id']),
-            text=data.get('text'),
-            user_data=user
-        )
-        
+        try:
+            comment_id = Comment.create_comment(
+                project_id=project_id,
+                user_id=str(user['_id']),
+                text=data.get('text'),
+                user_data=user
+            )
+        except Exception as e:
+            print(f"Error creating comment: {str(e)}")
+            return jsonify({"error": f"Failed to create comment: {str(e)}"}), 500
+
+        # Get the newly created comment
+        try:
+            new_comment = Comment.get_comment(comment_id)
+            if new_comment:
+                # Convert ObjectIds to strings
+                new_comment['_id'] = str(new_comment['_id'])
+                new_comment['project_id'] = str(new_comment['project_id'])
+                new_comment['user_id'] = str(new_comment['user_id'])
+            else:
+                return jsonify({"error": "Comment created but not retrieved"}), 500
+        except Exception as e:
+            print(f"Error retrieving new comment: {str(e)}")
+            return jsonify({"error": f"Failed to retrieve new comment: {str(e)}"}), 500
+
+        # Handle notifications
+        try:
+            project = Project.get_project_by_id(project_id)
+            if project:
+                for member_id in project['team_members']:
+                    if member_id['user_id'] != str(user['_id']):  # Don't notify the comment author
+                        Notification.create_notification(
+                            member_id['user_id'],
+                            'project_comment',
+                            f"New comment on project '{project['title']}'",
+                            comment_id
+                        )
+        except Exception as e:
+            print(f"Error creating notifications: {str(e)}")
+            # Don't return error here, as the comment was already created
+
         return jsonify({
             "message": "Comment created successfully",
-            "comment_id": comment_id
+            "comment": new_comment
         }), 201
         
     except ValidationError as err:
+        print(f"Validation error: {err.messages}")
         return jsonify({"errors": err.messages}), 400
     except Exception as e:
+        print(f"Unexpected error in create_comment: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @comments.route("/comments/<comment_id>", methods=["DELETE"])
@@ -125,6 +163,16 @@ def add_reply(comment_id):
         if result.modified_count == 0:
             return jsonify({"error": "Comment not found"}), 404
             
+        # Get original comment and notify its author
+        comment = Comment.get_comment(comment_id)
+        if comment and str(comment['user_id']) != str(user['_id']):  # Don't notify if replying to own comment
+            Notification.create_notification(
+                str(comment['user_id']),
+                'comment_reply',
+                f"New reply to your comment",
+                comment_id
+            )
+
         return jsonify({"message": "Reply added successfully"}), 201
         
     except Exception as e:

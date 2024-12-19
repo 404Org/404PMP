@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Home, Bell, Folder, LogOut, UserRound, ChevronDown, Square } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import Notifications from './Notifications';
 
 const Navbar = () => {
   const user = JSON.parse(localStorage.getItem('user'))
@@ -60,9 +61,9 @@ const Navbar = () => {
     navigate('/users');
   }
 
-  const handleNotifications = () => {
-    setIsProfileMenuOpen(false);
-  }
+  // const handleNotifications = () => {
+  //   setIsProfileMenuOpen(false);
+  // }
 
   const handleCardPage = () => {
     setIsProfileMenuOpen(false);
@@ -139,13 +140,14 @@ const Navbar = () => {
               </button>
             )}
 
-            <button
+            {/* <button
               onClick={handleNotifications}
               className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${activeSection === 'notifications' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
             >
               <Bell size={20} />
               <span>Notifications</span>
-            </button>
+            </button> */}
+          <Notifications isActive={activeSection === 'notifications'} />
 
             {/* cards for testing */}
             <button
