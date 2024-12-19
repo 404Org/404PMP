@@ -178,6 +178,10 @@ const Comments = ({ projectId }) => {
     );
   };
 
+  const handleCommentAdded = (newComment) => {
+    setComments(prevComments => [newComment, ...prevComments]);
+  };
+
   if (isLoading) {
     return <div className="mt-4 text-center">Loading comments...</div>;
   }
@@ -192,7 +196,7 @@ const Comments = ({ projectId }) => {
 
       <AddComment
         projectId={projectId}
-        onCommentAdded={fetchComments}
+        onCommentAdded={handleCommentAdded}
         replyTo={replyTo}
         onCancelReply={() => setReplyTo(null)}
         user={user}
