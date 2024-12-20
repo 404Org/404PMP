@@ -13,8 +13,8 @@ class ProjectSchema(Schema):
     start_date = fields.DateTime(required=True)
     end_date = fields.DateTime(required=True)
     tech_stack = fields.List(fields.Str(), required=True)
-    team_members = fields.List(fields.Str(), required=True)  # List of user IDs
-    project_manager = fields.Str(required=True)  # User ID of project manager
+    team_members = fields.List(fields.Dict(), required=True)  # List of user details
+    project_manager = fields.Dict(required=True)  # Changed to Dict for full user details
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
 

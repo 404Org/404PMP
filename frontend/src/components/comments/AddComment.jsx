@@ -26,8 +26,10 @@ const AddComment = ({ projectId, onCommentAdded, replyTo, onCancelReply, user })
       );
 
       if (response.ok) {
+        const data = await response.json();
+        onCommentAdded(data.comment);
         setNewComment('');
-        onCommentAdded();
+        // onCommentAdded();
         if (replyTo) onCancelReply();
       }
     } catch (error) {
