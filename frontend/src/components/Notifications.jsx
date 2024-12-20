@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
-import axios from 'axios';
 
 const NotificationsDropdown = ({ isActive }) => {
   const [notifications, setNotifications] = useState([]);
