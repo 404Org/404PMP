@@ -19,8 +19,6 @@ import UserDetails from './components/users/UserDetails';
 import UserEdit from './components/users/UserEdit';
 import { UserProvider } from './hooks/UserContext';
 
-import Cards from './pages/Cards';
-
 function App() {
   return (
     <div>
@@ -47,7 +45,6 @@ function App() {
                 <Route path="/users" element={<UserList />} />
                 <Route path="/users/:id" element={<UserDetails />} />
                 <Route path="/users/:id/edit" element={<UserEdit />} />
-                <Route path="/cards" element={<Cards />} />
               </Route>
             </Routes>
           </div>
