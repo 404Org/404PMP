@@ -33,13 +33,12 @@ const SearchBar = () => {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-
+  
     if (value.trim() === '') {
       setShowResults(false);
       return;
     }
-
-    // Filter projects based on search term
+  
     const filtered = projects.filter(project => {
       const searchValue = value.toLowerCase();
       return (
@@ -50,15 +49,22 @@ const SearchBar = () => {
           tech.toLowerCase().includes(searchValue)
         ) ||
         // Search by team members
-        project.team_members.some(member =>
-          member.toLowerCase().includes(searchValue)
-        )
+        project.team_members.some(member => {
+          if (typeof member === 'string') {
+            return member.toLowerCase().includes(searchValue);
+          }
+          if (typeof member.name === 'string') {
+            return member.name.toLowerCase().includes(searchValue);
+          }
+          return false; // Skip if neither string nor valid object
+        })
       );
     });
-
+  
     setFilteredProjects(filtered);
     setShowResults(true);
   };
+  
 
   // Handle project selection
   const handleProjectClick = (projectId) => {
