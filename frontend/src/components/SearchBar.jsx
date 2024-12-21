@@ -49,15 +49,9 @@ const SearchBar = () => {
           tech.toLowerCase().includes(searchValue)
         ) ||
         // Search by team members
-        project.team_members.some(member => {
-          if (typeof member === 'string') {
-            return member.toLowerCase().includes(searchValue);
-          }
-          if (typeof member.name === 'string') {
-            return member.name.toLowerCase().includes(searchValue);
-          }
-          return false; // Skip if neither string nor valid object
-        })
+        project.team_members.some(member =>
+          member.name.toLowerCase().includes(searchValue)
+        )
       );
     });
   

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Link, Upload, X, FileText } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
 const KnowledgeBaseManager = () => {
+    const { id: projectId } = useParams();
     const [resources, setResources] = useState([]);
     const [newLink, setNewLink] = useState('');
     const [newLinkName, setNewLinkName] = useState('');
@@ -10,6 +12,48 @@ const KnowledgeBaseManager = () => {
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editingResource, setEditingResource] = useState(null);
     const [editingIndex, setEditingIndex] = useState(null);
+    const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+
+    useEffect(() => {
+        if (projectId) {  // Only fetch if projectId exists
+            fetchKnowledgeBaseItems();
+        }
+    }, [projectId]);
+
+    const showAlert = (message, type = 'success') => {
+        setAlert({ show: true, message, type });
+        setTimeout(() => {
+            setAlert({ show: false, message: '', type: '' });
+        }, 3000);
+    };
+
+    const fetchKnowledgeBaseItems = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const url = `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/knowledge-base`;
+
+            const response = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch knowledge base items');
+            }
+
+            const data = await response.json();
+
+            setResources(data.items.map(item => ({
+                ...item,
+                icon: item.type === 'link' ? Link : getFileIcon(item.file_type),
+                url: item.type === 'file' ? `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}${item.url}` : item.url
+            })));
+        } catch (error) {
+            console.error('Fetch error:', error);
+            showAlert('Failed to load knowledge base items', 'error');
+        }
+    };
 
     const getFileIcon = (fileType) => {
         if (fileType.includes('pdf')) return FileText;
@@ -18,41 +62,79 @@ const KnowledgeBaseManager = () => {
         return FileText;
     };
 
-    const handleAddLink = () => {
+    const handleAddLink = async () => {
         if (newLink) {
-            setResources([
-                ...resources,
-                {
-                    type: 'link',
-                    url: newLink,
-                    name: newLinkName || '',  // Allow empty name
-                    icon: Link
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(
+                    `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/knowledge-base`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                            type: 'link',
+                            url: newLink,
+                            name: newLinkName || newLink,
+                            project_id: projectId
+                        }),
+                    }
+                );
+
+                const responseText = await response.text();
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to add link');
                 }
-            ]);
-            setNewLink('');
-            setNewLinkName('');
-            setIsDialogOpen(false);
-        } else {
-            alert('URL is required!');
+
+                const data = JSON.parse(responseText); // Parse the response text
+                showAlert('Link added successfully');
+                fetchKnowledgeBaseItems();
+                setNewLink('');
+                setNewLinkName('');
+                setIsDialogOpen(false);
+            } catch (error) {
+                showAlert(`Failed to add link: ${error.message}`, 'error');
+                console.error(error);
+            }
         }
     };
 
-    const handleFileUpload = (event) => {
+    const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
-            const FileIcon = getFileIcon(file.type);
-            const fileUrl = URL.createObjectURL(file);
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const token = localStorage.getItem('token');
+                const url = `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/knowledge-base`;
 
-            setResources([
-                ...resources,
-                {
-                    type: 'file',
-                    name: file.name,
-                    url: fileUrl,
-                    icon: FileIcon
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                });
+
+                const responseText = await response.text();
+
+                if (!response.ok) {
+                    throw new Error(`Upload failed: ${responseText}`);
                 }
-            ]);
-            setIsDialogOpen(false);
+
+                const data = JSON.parse(responseText);
+                showAlert('File uploaded successfully');
+                await fetchKnowledgeBaseItems(); // Refresh the list
+                setIsDialogOpen(false);
+            } catch (error) {
+                console.error('Upload error:', error);
+                showAlert('Failed to upload file', 'error');
+            }
         }
     };
 
@@ -62,25 +144,81 @@ const KnowledgeBaseManager = () => {
         setIsEditDialogOpen(true);
     };
 
-    const handleUpdateResource = () => {
-        if (editingResource.url) {
-            const updatedResources = [...resources];
-            updatedResources[editingIndex] = editingResource;
-            setResources(updatedResources);
-            setIsEditDialogOpen(false);
-            setEditingResource(null);
-            setEditingIndex(null);
-        } else {
-            alert('URL is required!');
+    const handleUpdateResource = async () => {
+        if (editingResource) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(
+                    `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/knowledge-base/${editingResource._id}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                            name: editingResource.name,
+                            url: editingResource.url,
+                        }),
+                    }
+                );
+
+                if (!response.ok) throw new Error('Failed to update resource');
+
+                showAlert('Resource updated successfully');
+                fetchKnowledgeBaseItems();
+                setIsEditDialogOpen(false);
+                setEditingResource(null);
+            } catch (error) {
+                showAlert('Failed to update resource', 'error');
+                console.error(error);
+            }
         }
     };
 
-    const removeResource = (indexToRemove) => {
-        setResources(resources.filter((_, index) => index !== indexToRemove));
+    const removeResource = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(
+                `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/knowledge-base/${id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) throw new Error('Failed to delete resource');
+
+            showAlert('Resource deleted successfully');
+            fetchKnowledgeBaseItems();
+        } catch (error) {
+            showAlert('Failed to delete resource', 'error');
+            console.error(error);
+        }
+    };
+
+    const getFileUrl = (resource) => {
+        if (resource.type === 'link') {
+            return resource.url;
+        } else {
+            return `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/uploads/knowledge_base/${resource.url.split('/').pop()}`;
+        }
     };
 
     return (
         <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200">
+            {alert.show && (
+                <div className={`p-4 rounded-md mb-4 ${
+                    alert.type === 'error' 
+                        ? 'bg-red-100 text-red-700' 
+                        : 'bg-green-100 text-green-700'
+                }`}>
+                    {alert.message}
+                </div>
+            )}
+
             <div className="flex justify-between items-center p-4 border-b">
                 <h2 className="text-xl font-semibold text-gray-800">Project Knowledge Base</h2>
                 <button
@@ -239,11 +377,12 @@ const KnowledgeBaseManager = () => {
                     <ul className="space-y-2">
                         {resources.map((resource, index) => {
                             const ResourceIcon = resource.icon;
+                            const resourceUrl = getFileUrl(resource);
+                            
                             return (
                                 <li
-                                    key={index}
-                                    className="flex items-center justify-between p-2 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                                    onClick={() => handleEdit(index)}
+                                    key={resource._id || index}
+                                    className="flex items-center justify-between p-2 border rounded-lg hover:bg-gray-50"
                                 >
                                     <div className="flex items-center space-x-2">
                                         <div className="w-6 h-6 flex items-center justify-center">
@@ -251,21 +390,28 @@ const KnowledgeBaseManager = () => {
                                         </div>
                                         <div className="flex flex-col">
                                             <a
-                                                href={resource.url}
+                                                href={resourceUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="font-medium text-blue-500 hover:underline"
-                                                onClick={(e) => e.stopPropagation()}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
                                             >
                                                 {resource.name || resource.url}
                                             </a>
+                                            {resource.created_by && (
+                                                <span className="text-xs text-gray-500">
+                                                    Added by {resource.created_by.name}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                removeResource(index);
+                                                removeResource(resource._id);
                                             }}
                                             className="p-1 rounded-full hover:bg-gray-100"
                                         >
