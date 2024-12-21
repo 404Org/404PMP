@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
 
-const NotificationsDropdown = ({ isActive }) => {
+const NotificationsDropdown = () => {
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isActive, setIsActive] = useState(false);
 
   const fetchNotifications = async () => {
     try {
@@ -31,6 +32,7 @@ const NotificationsDropdown = ({ isActive }) => {
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
+    setIsActive(!isActive);
   };
 
   const markAsRead = async (notificationId) => {
@@ -73,19 +75,16 @@ const NotificationsDropdown = ({ isActive }) => {
     <div className="relative">
       <button 
         onClick={handleToggle}
-        className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-          isActive ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'
-        }`}
+        className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 ${isActive ? 'text-blue-500' : 'text-gray-600'}`}
       >
         <div className="relative">
-          <Bell size={20} />
+          <Bell size={30} />
           {unreadCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               {unreadCount}
             </span>
           )}
         </div>
-        <span>Notifications</span>
       </button>
 
       {isOpen && (

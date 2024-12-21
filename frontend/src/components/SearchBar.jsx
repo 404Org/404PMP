@@ -33,13 +33,12 @@ const SearchBar = () => {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-
+  
     if (value.trim() === '') {
       setShowResults(false);
       return;
     }
-
-    // Filter projects based on search term
+  
     const filtered = projects.filter(project => {
       const searchValue = value.toLowerCase();
       return (
@@ -55,10 +54,11 @@ const SearchBar = () => {
         )
       );
     });
-
+  
     setFilteredProjects(filtered);
     setShowResults(true);
   };
+  
 
   // Handle project selection
   const handleProjectClick = (projectId) => {
