@@ -51,7 +51,7 @@ const SearchBar = () => {
         ) ||
         // Search by team members
         project.team_members.some(member =>
-          member.toLowerCase().includes(searchValue)
+          member.name.toLowerCase().includes(searchValue)
         )
       );
     });
