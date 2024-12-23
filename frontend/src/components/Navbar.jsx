@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Folder, LogOut, UserRound, ChevronDown, Square } from 'lucide-react';
+import { Home, Folder, LogOut, UserRound, ChevronDown} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Notifications from './Notifications';
@@ -58,30 +58,6 @@ const Navbar = () => {
     setIsProfileMenuOpen(false);
     navigate('/users');
   }
-
-  // useEffect(() => {
-  //   // Check if user is logged in
-  //   const token = localStorage.getItem('token');
-  //   const userData = localStorage.getItem('user');
-
-  //   if (!token || !userData) {
-  //     navigate('/', { replace: true });
-  //     return;
-  //   }
-
-  //   try {
-  //     setUser(JSON.parse(userData));
-  //   } catch (error) {
-  //     console.error('Error parsing user data:', error);
-  //     localStorage.removeItem('token');
-  //     localStorage.removeItem('user');
-  //     navigate('/', { replace: true });
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }, [navigate]);
-
-
 
   if (!user) return null;
 

@@ -10,13 +10,13 @@ const NotificationsDropdown = () => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem('token');
-        const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json(); 
-        console.log(data);
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log(data);
       setNotifications(data.notifications);
       setUnreadCount(data.notifications.filter(n => !n.is_read).length);
     } catch (error) {
@@ -35,29 +35,29 @@ const NotificationsDropdown = () => {
     setIsActive(!isActive);
   };
 
-  const markAsRead = async (notificationId) => {
-    try {
-      const token = localStorage.getItem('token');
-        const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/${notificationId}/read`, {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        console.log(data);
-        
-      fetchNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
+  // const markAsRead = async (notificationId) => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //       const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/${notificationId}/read`, {
+  //         method: 'PUT',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       const data = await response.json();
+  //       console.log(data);
+
+  //     fetchNotifications();
+  //   } catch (error) {
+  //     console.error('Error marking notification as read:', error);
+  //   }
+  // };
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diff = now - date;
-    
+
     // Less than 24 hours
     if (diff < 86400000) {
       if (diff < 3600000) { // Less than 1 hour
@@ -67,13 +67,59 @@ const NotificationsDropdown = () => {
       const hours = Math.floor(diff / 3600000);
       return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
     }
-    
+
     return date.toLocaleDateString();
+  };
+
+  const handleMarkAllAsReadAndDelete = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      // Mark all as read
+      await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/read-all`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // Delete all notifications
+      await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/delete-all`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchNotifications(); // Refresh notifications
+    } catch (error) {
+      console.error('Error marking all as read and deleting notifications:', error);
+    }
+  };
+
+  const handleDismissNotification = async (notificationId) => {
+    try {
+      const token = localStorage.getItem('token');
+      // Mark the notification as read
+      await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/${notificationId}/read`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // Delete the notification
+      await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/${notificationId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchNotifications(); // Refresh notifications
+    } catch (error) {
+      console.error('Error dismissing notification:', error);
+    }
   };
 
   return (
     <div className="relative">
-      <button 
+      <button
         onClick={handleToggle}
         className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 ${isActive ? 'text-blue-500' : 'text-gray-600'}`}
       >
@@ -92,9 +138,17 @@ const NotificationsDropdown = () => {
           <div className="p-2">
             <div className="flex justify-between items-center px-3 py-2 border-b">
               <h3 className="font-semibold">Notifications</h3>
-              {unreadCount > 0 && (
-                <span className="text-sm text-blue-600">{unreadCount} unread</span>
+              {notifications.length > 0 && (
+                <button
+                  onClick={handleMarkAllAsReadAndDelete}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Mark All as Read
+                </button>
               )}
+              {/* {unreadCount > 0 && (
+                <span className="text-sm text-blue-600">{unreadCount} unread</span>
+              )} */}
             </div>
             <div className="max-h-96 overflow-y-auto">
               {notifications.length === 0 ? (
@@ -103,15 +157,19 @@ const NotificationsDropdown = () => {
                 notifications.map((notification) => (
                   <div
                     key={notification._id}
-                    onClick={() => markAsRead(notification._id)}
-                    className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${
-                      !notification.is_read ? 'bg-blue-50' : ''
-                    }`}
+                    className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${!notification.is_read ? 'bg-blue-50' : ''
+                      }`}
                   >
                     <p className="text-sm">{notification.content}</p>
                     <p className="text-xs text-gray-500 mt-1">
                       {formatTimestamp(notification.created_at)}
                     </p>
+                    <button
+                      onClick={() => handleDismissNotification(notification._id)}
+                      className="mt-2 text-sm text-red-600 hover:underline"
+                    >
+                      Dismiss
+                    </button>
                   </div>
                 ))
               )}

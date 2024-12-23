@@ -66,3 +66,8 @@ class Notification:
             '_id': ObjectId(notification_id),
             'user_id': ObjectId(user_id)
         })
+
+    @staticmethod
+    def clear_all_notifications(user_id):
+        """Delete all notifications for a specific user."""
+        return mongo.db.notifications.delete_many({"user_id": ObjectId(user_id)})

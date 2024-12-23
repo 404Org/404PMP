@@ -72,3 +72,19 @@ def delete_notification(notification_id):
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@notifications.route("/notifications/delete-all", methods=["DELETE"])
+@jwt_required()
+def delete_all_notifications():
+    try:
+        current_user_email = get_jwt_identity()
+        user = UserService.get_user_by_email(current_user_email)
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        result = Notification.clear_all_notifications(str(user['_id']))
+        return jsonify({"message": f"Deleted {result.deleted_count} notifications"}), 200
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

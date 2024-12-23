@@ -11,13 +11,14 @@ const ProjectDetails = () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
- 
+  
+
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
     setUser(userData);
     fetchProject();
   }, [id]);
- 
+
   const fetchProject = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -27,11 +28,11 @@ const ProjectDetails = () => {
           'Content-Type': 'application/json'
         }
       });
- 
+
       if (!response.ok) {
         throw new Error('Failed to fetch project details');
       }
- 
+
       const data = await response.json();
       setProject(data.project);
     } catch (err) {
@@ -41,11 +42,11 @@ const ProjectDetails = () => {
       setIsLoading(false);
     }
   };
- 
+
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-600">{error}</div>;
   if (!project) return <div className="text-center mt-8">Project not found</div>;
- 
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -113,15 +114,30 @@ const ProjectDetails = () => {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h1 className="text-xl font-semibold mb-4">Team Members</h1>
               <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
-                {project.team_members.map((member, index) => {
+                {/* Separate project manager from the rest of the team members */}
+                {[
+                  project.project_manager, // Add project manager first
+                  ...project.team_members.filter(
+                    (member) => member.name !== project.project_manager.name
+                  ),
+                ].map((member, index) => {
                   if (typeof member.name === 'string') {
                     const firstChar = member.name.charAt(0);
                     return (
-                      <div key={index} className="flex items-center space-x-4">
+                      <div
+                        key={index}
+                        className="flex rounded-l-3xl p-1 items-center space-x-2 cursor-pointer hover:bg-gray-100"
+                        onClick={()=> navigate(`/users/${member.user_id}`)}
+                      >
                         <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
                           {firstChar.toUpperCase()}
                         </div>
-                        <span className="text-gray-700 text-base">{member.name}</span>
+
+                        <span className="text-gray-700 text-base">
+                          {member.name === project.project_manager.name
+                            ? `${member.name} (PM)`
+                            : member.name}
+                        </span>
                       </div>
                     );
                   } else {
@@ -131,6 +147,7 @@ const ProjectDetails = () => {
                 })}
               </div>
             </div>
+
 
             {/* Tech Stack */}
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -159,5 +176,5 @@ const ProjectDetails = () => {
     </div>
   );
 };
- 
+
 export default ProjectDetails;

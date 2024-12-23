@@ -8,7 +8,7 @@ class ProjectSchema(Schema):
     title = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     description = fields.Str(required=True)
     status = fields.Str(required=True, validate=validate.OneOf(
-        ['planning', 'in_progress', 'completed', 'on_hold']
+        ['upcoming', 'in_progress', 'completed', 'on_hold']
     ))
     start_date = fields.DateTime(required=True)
     end_date = fields.DateTime(required=True)

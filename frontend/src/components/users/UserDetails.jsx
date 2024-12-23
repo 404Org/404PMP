@@ -75,10 +75,10 @@ const UserDetails = () => {
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <button
-                onClick={() => navigate('/users')}
+                onClick={() => navigate(-1)}
                 className="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
               >
-                Back to Users
+                Back
               </button>
             </div>
           </div>
