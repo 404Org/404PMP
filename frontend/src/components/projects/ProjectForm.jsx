@@ -38,7 +38,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
   const [formData, setFormData] = React.useState({
     title: initialData?.title || '',
     description: initialData?.description || '',
-    status: initialData?.status || 'planning',
+    status: initialData?.status || 'upcoming',
     start_date: initialData?.start_date ? new Date(initialData.start_date).toISOString().split('T')[0] : '',
     end_date: initialData?.end_date ? new Date(initialData.end_date).toISOString().split('T')[0] : '',
     tech_stack: initialData?.tech_stack?.join(', ') || '',
@@ -235,7 +235,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         >
-          <option value="planning">Planning</option>
+          <option value="upcoming">Upcoming</option>
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
           <option value="on_hold">On Hold</option>
