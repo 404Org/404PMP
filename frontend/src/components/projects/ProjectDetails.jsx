@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar';
 import Comments from '../comments/Comments';
 import KnowledgeBaseManager from '../KnowledgeBase';
+import AuthErrorModal from '../AuthErrorModal';
 
 const ProjectDetails = () => {
   const [project, setProject] = useState(null);
@@ -11,7 +12,7 @@ const ProjectDetails = () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
@@ -28,6 +29,10 @@ const ProjectDetails = () => {
           'Content-Type': 'application/json'
         }
       });
+
+      if (response.status === 401 || !token) {
+        <AuthErrorModal />
+      }
 
       if (!response.ok) {
         throw new Error('Failed to fetch project details');
@@ -111,7 +116,7 @@ const ProjectDetails = () => {
           <div className="flex flex-col gap-6 flex-[0.8] mr-60">
 
             {/* Team Members Card */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-md p-6 w-100">
               <h1 className="text-xl font-semibold mb-4">Team Members</h1>
               <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
                 {/* Separate project manager from the rest of the team members */}
@@ -127,7 +132,7 @@ const ProjectDetails = () => {
                       <div
                         key={index}
                         className="flex rounded-l-3xl p-1 items-center space-x-2 cursor-pointer hover:bg-gray-100"
-                        onClick={()=> navigate(`/users/${member.user_id}`)}
+                        onClick={() => navigate(`/users/${member.user_id}`)}
                       >
                         <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
                           {firstChar.toUpperCase()}
@@ -150,7 +155,7 @@ const ProjectDetails = () => {
 
 
             {/* Tech Stack */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-md p-6 w-100">
               <h1 className="text-xl font-semibold mb-4">Tech Stack</h1>
               <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
                 <div className="flex flex-wrap gap-2">
@@ -167,7 +172,7 @@ const ProjectDetails = () => {
             </div>
 
             {/* Additional Info Card */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-md p-6 w-100">
               <KnowledgeBaseManager />
             </div>
           </div>

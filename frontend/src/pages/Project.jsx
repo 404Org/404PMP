@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import AuthErrorModal from '../components/AuthErrorModal';
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
@@ -30,6 +31,9 @@ const ProjectList = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch projects');
       }
+      if (response.status === 401 || !token) {
+        <AuthErrorModal/>
+      }
 
       const data = await response.json();
       setProjects(data.projects);
@@ -56,6 +60,10 @@ const ProjectList = () => {
 
       if (!response.ok) {
         throw new Error('Failed to delete project');
+      }
+
+      if (response.status === 401 || !token) {
+        <AuthErrorModal/>
       }
 
       fetchProjects();

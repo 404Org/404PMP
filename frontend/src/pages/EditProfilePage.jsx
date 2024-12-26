@@ -12,6 +12,7 @@ import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 //import { useLocation } from 'react-router-dom';
 import { useUserContext } from '../hooks/UserContext';
+import AuthErrorModal from '../components/AuthErrorModal';
 
 const UserProfileEdit = () => {
 
@@ -45,33 +46,36 @@ const UserProfileEdit = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-          const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/profile`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(profileData)
-          });
-    
-          if (response.ok) {
-            const updatedUser = await response.json();
-            setUserData(updatedUser);
-            setIsSaved(true);
-            setTimeout(() => {
-                setIsSaved(false);
-            }, 3000);
-          } else {
-            const data = await response.json();
-            setError(data.error || 'Failed to update profile');
-          }
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(profileData)
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                setUserData(updatedUser);
+                setIsSaved(true);
+                setTimeout(() => {
+                    setIsSaved(false);
+                }, 3000);
+            } else if (response.status === 401 || !token) {
+                <AuthErrorModal />
+            } else {
+                const data = await response.json();
+                setError(data.error || 'Failed to update profile');
+            }
         } catch (error) {
-          setError('An error occurred while updating profile');
+            setError('An error occurred while updating profile');
         } finally {
-            setIsLoading(false); 
+            setIsLoading(false);
         }
-      };
-      
+    };
+
 
     // const handleDeleteAccount = () => {
     //     const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
@@ -82,7 +86,7 @@ const UserProfileEdit = () => {
 
     const handleCancelButton = () => {
         setIsSaved(false);
-        navigate('/viewprofile')        
+        navigate('/viewprofile')
     };
 
     return (
@@ -93,7 +97,7 @@ const UserProfileEdit = () => {
             </div>
 
             {/* Main Content */}
-            <div className="pt-24 flex justify-center items-center pb-8">
+            <div className="pt-24 mt-5 flex justify-center items-center pb-8">
                 <div className="bg-white shadow-md rounded-lg w-full max-w-2xl p-8">
                     <h2 className="text-3xl font-bold text-center mb-6">Edit Profile</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -139,7 +143,7 @@ const UserProfileEdit = () => {
                                 />
                             </div>
                         </div>
-                        
+
                         {/* Email */}
                         <div className="relative">
                             <label className="block text-gray-700 mb-2">Email Address</label>
@@ -222,7 +226,7 @@ const UserProfileEdit = () => {
                         <div className="flex justify-between items-center">
                             <button
                                 type="submit"
-                                
+
                                 className={`
                                     flex items-center justify-center 
                                     w-[150px] 
@@ -241,7 +245,7 @@ const UserProfileEdit = () => {
                                         <Loader2 className="mr-2 animate-spin" size={20} />
                                         Saving...
                                     </>
-                                ) : isSaved ?  'Saved' : 'Save Changes'}
+                                ) : isSaved ? 'Saved' : 'Save Changes'}
                             </button>
                             <button
                                 type="button"

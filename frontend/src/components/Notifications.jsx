@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
+import AuthErrorModal from './AuthErrorModal';
 
 const NotificationsDropdown = () => {
   const [notifications, setNotifications] = useState([]);
@@ -15,8 +16,12 @@ const NotificationsDropdown = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (response.status === 401 || !token) {
+        <AuthErrorModal />
+      }
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
       setNotifications(data.notifications);
       setUnreadCount(data.notifications.filter(n => !n.is_read).length);
     } catch (error) {
@@ -34,24 +39,6 @@ const NotificationsDropdown = () => {
     setIsOpen(!isOpen);
     setIsActive(!isActive);
   };
-
-  // const markAsRead = async (notificationId) => {
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //       const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/${notificationId}/read`, {
-  //         method: 'PUT',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       const data = await response.json();
-  //       console.log(data);
-
-  //     fetchNotifications();
-  //   } catch (error) {
-  //     console.error('Error marking notification as read:', error);
-  //   }
-  // };
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
@@ -74,6 +61,11 @@ const NotificationsDropdown = () => {
   const handleMarkAllAsReadAndDelete = async () => {
     try {
       const token = localStorage.getItem('token');
+
+      if (!token) {
+        <AuthErrorModal />
+      }
+
       // Mark all as read
       await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/read-all`, {
         method: 'PUT',
@@ -97,6 +89,11 @@ const NotificationsDropdown = () => {
   const handleDismissNotification = async (notificationId) => {
     try {
       const token = localStorage.getItem('token');
+
+      if (!token) {
+        <AuthErrorModal />
+      }
+
       // Mark the notification as read
       await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications/${notificationId}/read`, {
         method: 'PUT',
@@ -124,7 +121,7 @@ const NotificationsDropdown = () => {
         className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 ${isActive ? 'text-blue-500' : 'text-gray-600'}`}
       >
         <div className="relative">
-          <Bell size={30} />
+          <Bell size={35} />
           {unreadCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               {unreadCount}
@@ -157,7 +154,7 @@ const NotificationsDropdown = () => {
                 notifications.map((notification) => (
                   <div
                     key={notification._id}
-                    className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${!notification.is_read ? 'bg-blue-50' : ''
+                    className={`p-3 border-b cursor-pointer hover:bg-blue-50 ${!notification.is_read ? 'bg-gray-50' : ''
                       }`}
                   >
                     <p className="text-sm">{notification.content}</p>

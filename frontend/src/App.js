@@ -18,6 +18,7 @@ import UserList from './components/users/UserList';
 import UserDetails from './components/users/UserDetails';
 import UserEdit from './components/users/UserEdit';
 import { UserProvider } from './hooks/UserContext';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/users" element={<UserList />} />
                 <Route path="/users/:id" element={<UserDetails />} />
                 <Route path="/users/:id/edit" element={<UserEdit />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
           </div>

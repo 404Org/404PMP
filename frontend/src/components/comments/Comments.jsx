@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AddComment from './AddComment';
 import CommentItem from './CommentItem';
+import AuthErrorModal from '../AuthErrorModal';
 
 const Comments = ({ projectId }) => {
   const [comments, setComments] = useState([]);
@@ -28,6 +29,10 @@ const Comments = ({ projectId }) => {
           },
         }
       );
+
+      if (response.status === 401 || !token) {
+        <AuthErrorModal />
+      }
 
       if (!response.ok) {
         throw new Error('Failed to fetch comments');

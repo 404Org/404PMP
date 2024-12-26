@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Link, Upload, X, FileText } from 'lucide-react';
 import { useParams } from 'react-router-dom';
+import AuthErrorModal from './AuthErrorModal';
 
 const KnowledgeBaseManager = () => {
     const { id: projectId } = useParams();
@@ -11,7 +12,7 @@ const KnowledgeBaseManager = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editingResource, setEditingResource] = useState(null);
-    const [editingIndex, setEditingIndex] = useState(null);
+    //const [editingIndex, setEditingIndex] = useState(null);
     const [alert, setAlert] = useState({ show: false, message: '', type: '' });
 
     useEffect(() => {
@@ -37,6 +38,10 @@ const KnowledgeBaseManager = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
+
+            if (response.status === 401 || !token) {
+                <AuthErrorModal />
+            }
 
             if (!response.ok) {
                 throw new Error('Failed to fetch knowledge base items');
@@ -85,6 +90,10 @@ const KnowledgeBaseManager = () => {
 
                 const responseText = await response.text();
 
+                if (response.status === 401 || !token) {
+                    <AuthErrorModal />
+                }
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.error || 'Failed to add link');
@@ -109,7 +118,7 @@ const KnowledgeBaseManager = () => {
             try {
                 const formData = new FormData();
                 formData.append('file', file);
-                
+
                 const token = localStorage.getItem('token');
                 const url = `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/knowledge-base`;
 
@@ -122,6 +131,10 @@ const KnowledgeBaseManager = () => {
                 });
 
                 const responseText = await response.text();
+
+                if (response.status === 401 || !token) {
+                    <AuthErrorModal />
+                }
 
                 if (!response.ok) {
                     throw new Error(`Upload failed: ${responseText}`);
@@ -140,7 +153,7 @@ const KnowledgeBaseManager = () => {
 
     const handleEdit = (index) => {
         setEditingResource({ ...resources[index] });
-        setEditingIndex(index);
+        //setEditingIndex(index);
         setIsEditDialogOpen(true);
     };
 
@@ -162,6 +175,10 @@ const KnowledgeBaseManager = () => {
                         }),
                     }
                 );
+
+                if (response.status === 401 || !token) {
+                    <AuthErrorModal />
+                }
 
                 if (!response.ok) throw new Error('Failed to update resource');
 
@@ -189,6 +206,10 @@ const KnowledgeBaseManager = () => {
                 }
             );
 
+            if (response.status === 401 || !token) {
+                <AuthErrorModal />
+            }
+
             if (!response.ok) throw new Error('Failed to delete resource');
 
             showAlert('Resource deleted successfully');
@@ -210,11 +231,10 @@ const KnowledgeBaseManager = () => {
     return (
         <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200">
             {alert.show && (
-                <div className={`p-4 rounded-md mb-4 ${
-                    alert.type === 'error' 
-                        ? 'bg-red-100 text-red-700' 
+                <div className={`p-4 rounded-md mb-4 ${alert.type === 'error'
+                        ? 'bg-red-100 text-red-700'
                         : 'bg-green-100 text-green-700'
-                }`}>
+                    }`}>
                     {alert.message}
                 </div>
             )}
@@ -378,36 +398,38 @@ const KnowledgeBaseManager = () => {
                         {resources.map((resource, index) => {
                             const ResourceIcon = resource.icon;
                             const resourceUrl = getFileUrl(resource);
-                            
+
                             return (
                                 <li
                                     key={resource._id || index}
-                                    className="flex items-center justify-between p-2 border rounded-lg hover:bg-gray-50"
+                                    className="flex items-center justify-between p-3 cursor-pointer border rounded-lg hover:bg-gray-50 group"
+                                    onClick={() => handleEdit(index)}
                                 >
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-6 h-6 flex items-center justify-center">
+                                    <div className="flex items-start space-x-3 min-w-0 flex-1">
+                                        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-1">
                                             <ResourceIcon className="w-5 h-5 text-gray-600" />
                                         </div>
-                                        <div className="flex flex-col">
+                                        <div className="flex flex-col min-w-0 flex-1">
                                             <a
                                                 href={resourceUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="font-medium text-blue-500 hover:underline"
+                                                className="font-medium text-blue-500 hover:underline break-all line-clamp-2 group-hover:line-clamp-none transition-all duration-200"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                 }}
+                                                title={resource.name || resource.url}
                                             >
                                                 {resource.name || resource.url}
                                             </a>
                                             {resource.created_by && (
-                                                <span className="text-xs text-gray-500">
+                                                <span className="text-xs text-gray-500 truncate block">
                                                     Added by {resource.created_by.name}
                                                 </span>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex-shrink-0 flex items-center ml-2">
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();

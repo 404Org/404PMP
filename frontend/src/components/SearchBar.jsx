@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import AuthErrorModal from "./AuthErrorModal";
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,6 +20,9 @@ const SearchBar = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        if (response.status === 401 || !token) {
+          <AuthErrorModal />
+        }
         const data = await response.json();
         setProjects(data.projects);
       } catch (error) {
@@ -33,12 +37,12 @@ const SearchBar = () => {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-  
+
     if (value.trim() === '') {
       setShowResults(false);
       return;
     }
-  
+
     const filtered = projects.filter(project => {
       const searchValue = value.toLowerCase();
       return (
@@ -54,11 +58,11 @@ const SearchBar = () => {
         )
       );
     });
-  
+
     setFilteredProjects(filtered);
     setShowResults(true);
   };
-  
+
 
   // Handle project selection
   const handleProjectClick = (projectId) => {
