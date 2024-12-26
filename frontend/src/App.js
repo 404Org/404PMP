@@ -6,7 +6,7 @@ import HomePage from './pages/HomePage'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProtectedRoutes from './components/ProtectedRoutes'
-import AllProjectsPage from './pages/AllProjectsPage'
+import NewProjectsPage from './pages/NewProjectsPage'
 import MyProjectsPage from './pages/MyProjectsPage'
 import EditProfilePage from './pages/EditProfilePage'
 import ProjectList from './pages/Project';
@@ -39,7 +39,7 @@ function App() {
                 <Route path="/projects/:id" element={<ProjectDetails />} />
                 <Route path="/projects/new" element={<NewProject />} />
                 <Route path="/projects/:id/edit" element={<EditProject />} />
-                <Route path="/allprojects" element={<AllProjectsPage />} />
+                <Route path="/newprojects" element={<NewProjectsPage />} />
                 <Route path="/myprojects" element={<MyProjectsPage />} />
                 <Route path="/editprofile" element={<EditProfilePage />} />
                 <Route path="/viewprofile" element={<ViewProfilePage />} />
