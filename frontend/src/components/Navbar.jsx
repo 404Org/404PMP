@@ -23,7 +23,7 @@ const Navbar = () => {
   const [value, setValue] = useState(
     location.pathname === '/myprojects' ? 'My Projects' :
     location.pathname === '/projects' ? 'All Projects' :
-    (location.pathname === '/newprojects' && user?.role==="employee") ? 'New Projects' :
+    location.pathname === '/newprojects' ? 'New Projects' :
     'Projects'
   );
 
@@ -125,8 +125,7 @@ const Navbar = () => {
                     >
                       All Projects
                     </button>
-                    
-                    {user.role !== 'admin' && (
+
                     <button
                       onClick={handleNewProjects}
                       className={`w-full text-left mt-2 p-2 rounded-md ${
@@ -134,7 +133,7 @@ const Navbar = () => {
                       }`}
                     >
                       New Projects
-                    </button>)}
+                    </button>
                   </div>
                 </div>
               )}
@@ -162,7 +161,7 @@ const Navbar = () => {
                 className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg"
               >
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                  <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-white">
                     {user.name?.charAt(0).toUpperCase()}
                   </div>
                 </div>
@@ -178,7 +177,7 @@ const Navbar = () => {
                   <div className="p-4">
                     <div className="flex items-center space-x-3 mb-4">
                       <div className="flex-shrink-0">
-                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                        <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white">
                           {user.name?.charAt(0).toUpperCase()}
                         </div>
                       </div>
