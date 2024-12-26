@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
+import AuthErrorModal from '../AuthErrorModal';
 
 const AddComment = ({ projectId, onCommentAdded, replyTo, onCancelReply, user }) => {
   const [newComment, setNewComment] = useState('');
@@ -24,7 +25,9 @@ const AddComment = ({ projectId, onCommentAdded, replyTo, onCancelReply, user })
           }),
         }
       );
-
+      if (response.status === 401 || !token) {
+        <AuthErrorModal />
+      }
       if (response.ok) {
         const data = await response.json();
         onCommentAdded(data.comment);

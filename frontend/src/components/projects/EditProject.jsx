@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ProjectForm from './ProjectForm';
 import Navbar from '../Navbar';
+import AuthErrorModal from '../AuthErrorModal';
 
 const EditProject = () => {
   const [project, setProject] = useState(null);
@@ -13,11 +14,15 @@ const EditProject = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${id}`, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
+
+      if (response.status === 401 || !token) {
+        <AuthErrorModal />
+      }
 
       if (!response.ok) {
         throw new Error('Failed to fetch project');
@@ -41,12 +46,16 @@ const EditProject = () => {
     const token = localStorage.getItem('token');
     const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${id}`, {
       method: 'PUT',
-      headers: { 
+      headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(formData)
     });
+
+    if (response.status === 401 || !token) {
+      <AuthErrorModal />
+    }
 
     if (!response.ok) {
       const error = await response.json();
@@ -62,15 +71,15 @@ const EditProject = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar/>
+      <Navbar />
       <div className="py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg shadow-md p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Project</h1>
-            <ProjectForm 
-              initialData={project} 
-              onSubmit={handleSubmit} 
-              isEditing={true} 
+            <ProjectForm
+              initialData={project}
+              onSubmit={handleSubmit}
+              isEditing={true}
             />
           </div>
         </div>

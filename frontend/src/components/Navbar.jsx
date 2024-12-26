@@ -32,10 +32,11 @@ const Navbar = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     // Redirect to login page
-    navigate('/');
+    navigate('/',{ replace: true });
   };
 
   const handleEditProfile = () => {
+
     navigate('/viewprofile');
   };
 
@@ -62,7 +63,7 @@ const Navbar = () => {
   if (!user) return null;
 
   return (
-    <div className="bg-gray-100 flex flex-col">
+    <div className="sticky top-0 z-50 bg-gray-100 flex flex-col">
       {/* Horizontal Navigation Bar */}
       <nav className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">

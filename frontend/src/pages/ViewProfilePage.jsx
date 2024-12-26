@@ -5,12 +5,14 @@ import {
     Briefcase,
     FileText,
     Star,
-    Edit
+    Edit,
+    Layers,
+    FileChartColumnIncreasing
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../hooks/UserContext';
-
+import AuthErrorModal from '../components/AuthErrorModal';
 
 const ViewProfilePage = () => {
 
@@ -19,18 +21,60 @@ const ViewProfilePage = () => {
     const { userData, setUserData } = useUserContext();
     const userId = localStorage.getItem('_id');
     const [loading, setLoading] = useState(true);
+    const [projects, setProjects] = useState([]);
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        fetchProjects(user);
+    }, []);
+
+    const fetchProjects = async (user) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401 || !token) {
+                <AuthErrorModal />
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch projects');
+            }
+
+
+            const data = await response.json();
+            // Filter projects based on whether the user is part of the team members
+            const filteredProjects = data.projects.filter(project =>
+                project.team_members.some(member => member.name === user.name)
+            );
+            setProjects(filteredProjects);
+        } catch (err) {
+            setError('Failed to fetch projects');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+                const token = localStorage.getItem('token');
                 const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/${userId}`, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${token}`
                     }
                 });
                 if (response.ok) {
                     const data = await response.json();
                     setUserData(data);
+                } else if (response.status === 401 || !token) {
+                    <AuthErrorModal />
                 } else {
                     setError('Failed to fetch user data');
                 }
@@ -42,7 +86,7 @@ const ViewProfilePage = () => {
         };
 
         fetchUserData();
-    }, [userId,setUserData]);
+    }, [userId, setUserData]);
 
     const handleEditProfile = () => {
         navigate('/editprofile');
@@ -58,7 +102,7 @@ const ViewProfilePage = () => {
     // };
 
     const avatar = null;
-        
+
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Navbar */}
@@ -67,7 +111,7 @@ const ViewProfilePage = () => {
             </div>
 
             {/* Main Content */}
-            <div className="pt-24 flex justify-center items-center pb-8">
+            <div className="pt-24 mt-5 flex justify-center items-center pb-8">
                 {loading ? (
                     <div className="text-center">
                         <p>Loading...</p>
@@ -138,12 +182,12 @@ const ViewProfilePage = () => {
                             {/* Skills Section */}
                             <div className="bg-gray-50 p-4 rounded-md">
                                 <div className="flex items-center mb-2">
-                                    <Star className="mr-3 text-gray-400" size={20} />
+                                    <Layers className="mr-3 text-gray-400" size={20} />
                                     <h3 className="text-lg font-semibold">Professional Skills</h3>
                                 </div>
                                 <div className="pl-7 flex flex-wrap gap-2">
                                     {userData.skills ? (
-                                        typeof userData.skills === 'string' ? 
+                                        typeof userData.skills === 'string' ?
                                             userData.skills.split(',').map((skill, index) => (
                                                 <span
                                                     key={index}
@@ -152,7 +196,7 @@ const ViewProfilePage = () => {
                                                     {skill.trim()}
                                                 </span>
                                             ))
-                                            : Array.isArray(userData.skills) ? 
+                                            : Array.isArray(userData.skills) ?
                                                 userData.skills.map((skill, index) => (
                                                     <span
                                                         key={index}
@@ -176,6 +220,36 @@ const ViewProfilePage = () => {
                                 </div>
                                 <p className="pl-7 text-gray-700">{userData.bio}</p>
                             </div>
+
+                            {/* Projects Section */}
+                            <div className="bg-gray-50 p-4 rounded-md">
+                                <div className="flex items-center mb-2">
+                                    < FileChartColumnIncreasing className="mr-3 text-gray-400" size={20} />
+                                    <h3 className="text-lg font-semibold">Projects</h3>
+                                </div>
+                                <div className="grid gap-4">
+                                    {projects.map((project, index) => (
+                                        <div
+                                            key={index}
+                                            className="bg-white ml-8 p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md transition-shadow"
+                                            onClick={() => navigate(`/projects/${project._id}`)}
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h3 className="font-medium text-gray-900">{project.title}</h3>
+                                                </div>
+                                                <span className={`px-3 py-1 rounded-full text-sm ${project.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                    project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                                                        'bg-yellow-100 text-yellow-800'
+                                                    }`}>
+                                                    {project.status.replace('_', ' ')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
                             {/* Edit Profile Button */}
                             <div className="flex justify-center mt-6">
                                 <button

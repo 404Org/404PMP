@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
+import AuthErrorModal from '../components/AuthErrorModal';
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
@@ -15,8 +16,7 @@ const HomePage = () => {
     const userData = localStorage.getItem('user');
 
     if (!token || !userData) {
-      navigate('/', { replace: true });
-      return;
+      <AuthErrorModal/>
     }
 
     try {

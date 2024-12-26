@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthErrorModal from '../AuthErrorModal';
 
 const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
   // Transform initial team members data if needed
@@ -82,11 +83,15 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           'Content-Type': 'application/json'
         }
       });
-      
+
+      if (response.status === 401 || !token) {
+        <AuthErrorModal />
+      }
+
       if (!response.ok) throw new Error('Failed to fetch users');
-      
+
       const users = await response.json();
-      const filteredUsers = users.filter(user => 
+      const filteredUsers = users.filter(user =>
         user.name.toLowerCase().includes(term.toLowerCase()) ||
         user.email.toLowerCase().includes(term.toLowerCase())
       );
@@ -210,7 +215,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           value={formData.title}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
 
@@ -222,7 +227,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           onChange={handleChange}
           required
           rows={4}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
 
@@ -233,7 +238,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           value={formData.status}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         >
           <option value="upcoming">Upcoming</option>
           <option value="in_progress">In Progress</option>
@@ -251,7 +256,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
             value={formData.start_date}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
@@ -263,7 +268,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
             value={formData.end_date}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -277,7 +282,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           onChange={handleChange}
           required
           placeholder="React, Node.js, MongoDB"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
 
@@ -290,9 +295,9 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           onFocus={() => setShowSuggestions(true)}
           name="team_members"
           placeholder="Search users..."
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
-        
+
         {/* User suggestions dropdown */}
         {showSuggestions && userSuggestions.length > 0 && (
           <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
@@ -350,9 +355,9 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           onFocus={() => setShowPmSuggestions(true)}
           name="project_manager_search"
           placeholder="Search for project manager..."
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
-        
+
         {/* Project Manager suggestions */}
         {showPmSuggestions && pmSuggestions.length > 0 && (
           <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">

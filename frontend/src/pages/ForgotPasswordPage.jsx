@@ -16,7 +16,7 @@ const ForgotPasswordPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Reset previous messages
     setError('');
     setSuccess('');
@@ -50,7 +50,7 @@ const ForgotPasswordPage = () => {
         setEmail('');
         // navigate('/resetpassword')
         // Navigate to reset password page with token
-      if (data.reset_token) {
+        if (data.reset_token) {
           navigate(`/resetpassword/${data.reset_token}`);
         }
       } else {
@@ -68,12 +68,12 @@ const ForgotPasswordPage = () => {
         <p className="text-center text-gray-600 mb-6">
           Enter the email address associated with your account
         </p>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email Input */}
           <div className="relative">
             <AtSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
+            <input
               type="email"
               value={email}
               onChange={(e) => {
@@ -83,11 +83,10 @@ const ForgotPasswordPage = () => {
               }}
               placeholder="Enter your email address"
               required
-              className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                error 
-                  ? 'border-red-500 focus:ring-red-500' 
+              className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${error
+                  ? 'border-red-500 focus:ring-red-500'
                   : 'focus:ring-blue-500'
-              }`}
+                }`}
             />
           </div>
 
@@ -106,8 +105,8 @@ const ForgotPasswordPage = () => {
           )}
 
           {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300 flex items-center justify-center"
           >
             <Send className="mr-2" size={20} />
@@ -116,7 +115,7 @@ const ForgotPasswordPage = () => {
 
           {/* Login Redirect */}
           <p className="text-center mt-4 text-sm text-gray-600">
-            Remember your password? 
+            Remember your password?
             <a href="/" className="text-blue-500 ml-1 hover:underline">
               Go to Login
             </a>
