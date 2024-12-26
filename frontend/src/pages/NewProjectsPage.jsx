@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { MoreVertical, Edit, Trash2} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AuthErrorModal from '../components/AuthErrorModal';
 
-const MyProjectsPage = () => {
+const NewProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showActions, setShowActions] = useState(null);
   const [user, setUser] = useState(null);
+  const [interestedProjects, setInterestedProjects] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
     setUser(userData);
-    fetchProjects(userData);
+    fetchProjects();
   }, []);
 
-  const fetchProjects = async (userData) => {
+  const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects`, {
@@ -28,21 +29,15 @@ const MyProjectsPage = () => {
         }
       });
 
-      if (response.status === 401 || !token) {
-        <AuthErrorModal/>
-      }
-
       if (!response.ok) {
         throw new Error('Failed to fetch projects');
       }
-      
+      if (response.status === 401 || !token) {
+        <AuthErrorModal />
+      }
 
       const data = await response.json();
-      // Filter projects based on whether the user is part of the team members
-      const filteredProjects = data.projects.filter(project =>
-        project.team_members.some(member => member.name === userData.name)
-      );
-      setProjects(filteredProjects);
+      setProjects(data.projects.filter(project => project.status === 'upcoming'));
     } catch (err) {
       setError('Failed to fetch projects');
       console.error(err);
@@ -69,7 +64,7 @@ const MyProjectsPage = () => {
       }
 
       if (response.status === 401 || !token) {
-        <AuthErrorModal/>
+        <AuthErrorModal />
       }
 
       fetchProjects();
@@ -77,6 +72,13 @@ const MyProjectsPage = () => {
       console.error(err);
       alert('Failed to delete project');
     }
+  };
+
+  const handleInterestToggle = (projectId) => {
+    setInterestedProjects((prev) => ({
+      ...prev,
+      [projectId]: !prev[projectId],
+    }));
   };
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
@@ -88,7 +90,15 @@ const MyProjectsPage = () => {
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white p-6 rounded-lg shadow-md flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">My Projects</h1>
+            <h1 className="text-2xl font-bold text-gray-900">New Projects</h1>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => navigate('/projects/new')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                New Project
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,8 +156,8 @@ const MyProjectsPage = () => {
                   <div className="flex justify-between items-start mb-3 pr-8">
                     <h2 className="text-xl font-semibold">{project.title}</h2>
                     <span className={`px-3 py-1 rounded-full text-sm ${project.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
+                        project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
                       }`}>
                       {project.status.replace('_', ' ')}
                     </span>
@@ -162,7 +172,7 @@ const MyProjectsPage = () => {
                 </div>
 
                 {/* Bottom Section - Team Members */}
-                <div className="px-6 py-4 border-t border-gray-100 mt-auto">
+                <div className="px-6 py-4 border-t border-gray-100 mt-auto flex justify-between items-center">
                   <div className="flex -space-x-2">
                     {project.team_members.length > 2 ? (
                       <>
@@ -177,7 +187,7 @@ const MyProjectsPage = () => {
                         ))}
                         <div
                           className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
-                          title={project.team_members.slice(2).map(member => member.name).join(', ')}>
+                          title={project.team_members.slice(2).map(member => member.name).join(', ')} >
                           +{project.team_members.length - 2}
                         </div>
                       </>
@@ -193,6 +203,15 @@ const MyProjectsPage = () => {
                       ))
                     )}
                   </div>
+
+                  {/* Interested Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleInterestToggle(project._id)}
+                    className={`flex items-center px-4 py-2 rounded-md transition ${interestedProjects[project._id] ? 'bg-green-600' : 'bg-blue-400'} text-white`}
+                  >
+                     I'm Interested
+                  </button>
                 </div>
               </div>
             ))}
@@ -203,4 +222,4 @@ const MyProjectsPage = () => {
   );
 };
 
-export default MyProjectsPage; 
+export default NewProjectsPage; 
