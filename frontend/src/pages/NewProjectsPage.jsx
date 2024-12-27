@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Edit, Trash2} from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -46,12 +46,12 @@ const NewProjectsPage = () => {
     }
   };
 
-  const handleDelete = async (projectId) => {
+  const handleDelete = async (project) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}`, {
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${project._id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -74,11 +74,32 @@ const NewProjectsPage = () => {
     }
   };
 
-  const handleInterestToggle = (projectId) => {
+  const handleInterestToggle = async (project) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
     setInterestedProjects((prev) => ({
       ...prev,
-      [projectId]: !prev[projectId],
+      [project._id]: !prev[project._id],
     }));
+
+    const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: project.project_manager.user_id,
+        type: 'project_interest',
+        content: `${user.name} is interested in project ${project.title}`,
+        reference_id: project._id,
+      }),
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to send notification');
+    }
   };
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
@@ -199,7 +220,7 @@ const NewProjectsPage = () => {
                   {/* Interested Button */}
                   <button
                     type="button"
-                    onClick={() => handleInterestToggle(project._id)}
+                    onClick={() => handleInterestToggle(project)}
                     className={`flex items-center px-4 py-2 rounded-md transition ${interestedProjects[project._id] ? 'bg-green-600' : 'bg-blue-400'} text-white`}
                   >
                      I'm Interested
