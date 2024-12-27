@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from notifications.models import Notification
 from users.models import UserService
@@ -85,6 +85,28 @@ def delete_all_notifications():
 
         result = Notification.clear_all_notifications(str(user['_id']))
         return jsonify({"message": f"Deleted {result.deleted_count} notifications"}), 200
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@notifications.route("/notifications", methods=["POST"])
+@jwt_required()
+def create_notification():
+    try:
+        current_user_email = get_jwt_identity()
+        user = UserService.get_user_by_email(current_user_email)
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        data = request.get_json()
+        notification_id = Notification.create_notification(
+            data['user_id'],
+            data['type'],
+            data['content'],
+            data['reference_id']
+        )
+        return jsonify({"message": "Notification created", "notification_id": notification_id}), 201
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
