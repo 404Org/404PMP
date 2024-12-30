@@ -14,10 +14,12 @@ const KnowledgeBaseManager = () => {
     const [editingResource, setEditingResource] = useState(null);
     //const [editingIndex, setEditingIndex] = useState(null);
     const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+    const [isUserTeamMember, setIsUserTeamMember] = useState(false);
 
     useEffect(() => {
         if (projectId) {  // Only fetch if projectId exists
             fetchKnowledgeBaseItems();
+            checkUserMembership();
         }
     }, [projectId]);
 
@@ -38,7 +40,7 @@ const KnowledgeBaseManager = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
+         
             if (response.status === 401 || !token) {
                 <AuthErrorModal />
             }
@@ -140,7 +142,7 @@ const KnowledgeBaseManager = () => {
                     throw new Error(`Upload failed: ${responseText}`);
                 }
 
-                const data = JSON.parse(responseText);
+                //const data = JSON.parse(responseText);
                 showAlert('File uploaded successfully');
                 await fetchKnowledgeBaseItems(); // Refresh the list
                 setIsDialogOpen(false);
@@ -228,6 +230,28 @@ const KnowledgeBaseManager = () => {
         }
     };
 
+    const checkUserMembership = async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+            const url = `${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}`;
+
+            const response = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) throw new Error('Failed to fetch project members');
+
+            const projectData = await response.json();
+            const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
+            setIsUserTeamMember(projectData.project.team_members.some(member => member.user_id === user._id)); // Check if the user is a member of the project
+        } catch (error) {
+            console.error('Membership check error:', error);
+        }
+    };
+
     return (
         <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200">
             {alert.show && (
@@ -241,12 +265,14 @@ const KnowledgeBaseManager = () => {
 
             <div className="flex justify-between items-center p-4 border-b">
                 <h2 className="text-xl font-semibold text-gray-800">Project Knowledge Base</h2>
-                <button
-                    onClick={() => setIsDialogOpen(true)}
-                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                    <Plus className="w-6 h-6 text-gray-600" />
-                </button>
+                {isUserTeamMember && (
+                    <button
+                        onClick={() => setIsDialogOpen(true)}
+                        className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                        <Plus className="w-6 h-6 text-gray-600" />
+                    </button>
+                )}
             </div>
 
             {isDialogOpen && (
@@ -340,7 +366,7 @@ const KnowledgeBaseManager = () => {
                 </div>
             )}
 
-            {isEditDialogOpen && editingResource && (
+            {isEditDialogOpen && editingResource && isUserTeamMember && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg shadow-xl w-96 p-6">
                         <div className="flex justify-between items-center mb-4">

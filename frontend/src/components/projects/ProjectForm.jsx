@@ -191,7 +191,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
       };
 
       await onSubmit(transformedData);
-      navigate('/projects');
+      navigate(-1);
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong');
     } finally {
@@ -409,7 +409,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
       <div className="flex justify-end space-x-4">
         <button
           type="button"
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate(-1)}
           className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
         >
           Cancel

@@ -28,12 +28,12 @@ const MyProjectsPage = () => {
         }
       });
 
-      if (response.status === 401 || !token) {
-        <AuthErrorModal/>
-      }
-
       if (!response.ok) {
         throw new Error('Failed to fetch projects');
+      }
+
+      if (response.status === 401 || !token) {
+        <AuthErrorModal/>
       }
       
 
