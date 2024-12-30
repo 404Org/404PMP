@@ -56,6 +56,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState(null);
   const navigate = useNavigate();
+  const [errors, setErrors] = React.useState({}); // State for error messages
 
   // Fetch users for suggestions
   useEffect(() => {
@@ -174,10 +175,31 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
     setShowPmSuggestions(false);
   };
 
+  const validateDates = () => {
+    const newErrors = {};
+    const startDate = new Date(formData.start_date);
+    const endDate = new Date(formData.end_date);
+
+    // Check if end date is provided and is after the start date
+    if (!formData.end_date) {
+      newErrors.end_date = 'End date is required.';
+    } else if (endDate <= startDate) {
+      newErrors.end_date = 'End date must be after the start date.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+
+    if (!validateDates()) {
+      setIsSubmitting(false);
+      return; // Stop submission if validation fails
+    }
 
     try {
       // Transform data for API
@@ -268,8 +290,9 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
             value={formData.end_date}
             onChange={handleChange}
             required
-            className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className={`mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 ${errors.end_date ? 'border-red-500' : ''}`}
           />
+          {errors.end_date && <p className="text-red-600 text-sm">{errors.end_date}</p>}
         </div>
       </div>
 

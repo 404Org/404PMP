@@ -11,9 +11,10 @@ const MyProjectsPage = () => {
   const [showActions, setShowActions] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const userData = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem('user'));
+    
     setUser(userData);
     fetchProjects(userData);
   }, []);
@@ -50,7 +51,7 @@ const MyProjectsPage = () => {
       setIsLoading(false);
     }
   };
-
+ 
   const handleDelete = async (projectId) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
 
@@ -72,7 +73,7 @@ const MyProjectsPage = () => {
         <AuthErrorModal/>
       }
 
-      fetchProjects();
+      fetchProjects(userData);
     } catch (err) {
       console.error(err);
       alert('Failed to delete project');
