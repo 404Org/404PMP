@@ -81,7 +81,7 @@ const ProjectList = () => {
       <Navbar />
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white p-6 rounded-lg shadow-md flex justify-between items-center mb-6">
+          <div className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
             
           </div>
@@ -97,9 +97,21 @@ const ProjectList = () => {
                   className="p-6 cursor-pointer flex flex-col flex-grow"
                   onClick={() => navigate(`/projects/${project._id}`)}
                 >
+                  
+
+                  {/* Title and Status */}
+                  <div className="flex justify-start items-start mb-3">
+                    <h2 className="text-xl font-semibold">{project.title}</h2>
+                    <span className={`px-3 py-1 ml-auto rounded-full text-sm ${
+                      project.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {project.status.replace('_', ' ')}
+                    </span>
                   {/* Admin Actions */}
                   {user?.role === 'admin' && (
-                    <div className="absolute top-4 right-4 z-10">
+                    <div className="">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -136,17 +148,6 @@ const ProjectList = () => {
                       )}
                     </div>
                   )}
-
-                  {/* Title and Status */}
-                  <div className="flex justify-between items-start mb-3 pr-8">
-                    <h2 className="text-xl font-semibold">{project.title}</h2>
-                    <span className={`px-3 py-1 ml-2 rounded-full text-sm ${
-                      project.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {project.status.replace('_', ' ')}
-                    </span>
                   </div>
 
                   {/* Description with fixed height */}
@@ -165,14 +166,14 @@ const ProjectList = () => {
                         {project.team_members.slice(0, 2).map((member) => (
                           <div
                             key={member.name}
-                            className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
+                            className="w-9 h-9 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
                             title={`${member.name}`}
                           >
                             {member.name.charAt(0).toUpperCase()}
                           </div>
                         ))}
                         <div 
-                            className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white" 
+                            className="w-9 h-9 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white" 
                             title={project.team_members.slice(2).map(member => member.name).join(', ')}>
                           +{project.team_members.length - 2}
                         </div>

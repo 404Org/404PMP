@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+.text-2xl{
+  font-size: 1.3rem;
+}
+/* index page */
+.mainPage{
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* header */
+.ddNameIcon{
+  width: 3.5rem;
+  height: 3.5rem;
+}
+.userDropdown{
+  width: 17rem;
+}

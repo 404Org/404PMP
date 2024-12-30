@@ -47,11 +47,13 @@ const HomePage = () => {
       <Navbar />
 
       {/* Main Content Area */}
-      <main className="flex-1 mx-auto px-4 py-6 pt-6 w-full max-w-7xl">
-        <div className="pt-6">
-          <h1 className="text-6xl font-bold text-center mb-8">Project Portal</h1>
-        </div>
+      <main className="flex-1 mx-auto px-4 py-6 pt-6 w-full max-w-7xl mainPage">
+        <div>
+          <div>
+            <h1 className="text-6xl font-bold text-center mb-8">Project Portal</h1>
+          </div>
         <SearchBar />
+        </div>
       </main>
     </div>
   );
