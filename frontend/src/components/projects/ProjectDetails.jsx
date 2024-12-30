@@ -4,6 +4,7 @@ import Navbar from '../Navbar';
 import Comments from '../comments/Comments';
 import KnowledgeBaseManager from '../KnowledgeBase';
 import AuthErrorModal from '../AuthErrorModal';
+import { UsersRound } from 'lucide-react';
 
 const ProjectDetails = () => {
   const [project, setProject] = useState(null);
@@ -13,6 +14,11 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+
+  const handleInterestPage = () => {
+    navigate(`/interested/${id}`);
+
+  };
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
@@ -64,12 +70,22 @@ const ProjectDetails = () => {
               <div className="flex justify-between items-start mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
                 {user?.role === 'admin' && (
-                  <button
-                    onClick={() => navigate(`/projects/${id}/edit`)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Edit Project
-                  </button>
+                  <div className="flex items-center">
+                    { project.status==="upcoming" && (
+                      <button
+                        onClick={handleInterestPage}
+                        className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400`}
+                      >
+                        <UsersRound className="w-8 h-8" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => navigate(`/projects/${id}/edit`)}
+                      className="px-4 py-2 ml-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 w-32"
+                    >
+                      Edit Project
+                    </button>
+                  </div>
                 )}
               </div>
 

@@ -66,7 +66,7 @@ const UserList = () => {
   const handleRoleChange = async (userId, newRole) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/${userId}/role`, {
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/${userId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -77,6 +77,10 @@ const UserList = () => {
 
       if (response.ok) {
         setUsers(users.map(user => user._id === userId ? { ...user, role: newRole } : user));
+        if (newRole === 'employee' && userId === currentUser._id) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
       } else {
         alert('Failed to update user role');
       }

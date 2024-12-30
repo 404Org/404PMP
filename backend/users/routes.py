@@ -95,3 +95,29 @@ def update_user(user_id):
         return jsonify({"error": "User not found or no changes made"}), 404
     except Exception as e:
         return jsonify({"error": f"Failed to update user: {str(e)}"}), 400
+
+@users.route("/users/<user_id>", methods=["PATCH"])
+@jwt_required()
+def update_user_role(user_id):
+    # Get current user's role
+    current_user_email = get_jwt_identity()
+    current_user = User.find_by_email(current_user_email)
+    
+    # Check if user is admin
+    if not current_user or current_user.get("role") != "admin":
+        return jsonify({"error": "Unauthorized access"}), 403
+    
+    data = request.get_json()
+    
+    try:
+        # Sanitize update data (only role is allowed to be updated)
+        update_data = {"role": data.get("role")}
+        
+        # Update user role
+        result = UserService.update_user_by_id(user_id, update_data)
+        
+        if result.modified_count:
+            return jsonify({"message": "User role updated successfully"}), 200
+        return jsonify({"error": "User not found or no changes made"}), 404
+    except Exception as e:
+        return jsonify({"error": f"Failed to update user role: {str(e)}"}), 400
