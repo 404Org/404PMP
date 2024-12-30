@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Home, Folder, LogOut, UserRound, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Notifications from './Notifications';
+import Logo from '../assets/images/Logo.png';
 
 const Navbar = () => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -26,6 +27,8 @@ const Navbar = () => {
     location.pathname === '/newprojects' ? 'New Projects' :
     'Projects'
   );
+  const projectsMenuRef = useRef(null);
+  const profileMenuRef = useRef(null);
 
   const toggleProjectsMenu = () => {
     setIsProjectsMenuOpen(!isProjectsMenuOpen);
@@ -75,13 +78,32 @@ const Navbar = () => {
     navigate('/users');
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (projectsMenuRef.current && !projectsMenuRef.current.contains(event.target)) {
+        setIsProjectsMenuOpen(false);
+      }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [projectsMenuRef, profileMenuRef]);
+
   if (!user) return null;
 
   return (
     <div className="sticky top-0 z-50 bg-gray-100 flex flex-col">
       <nav className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="text-xl font-bold text-gray-800">Project Portal</div>
+          <div className="flex items-center">
+            <img src={Logo} alt="Logo" className="h-20 mr-2" />
+            <div className="text-xl font-bold text-gray-800">Project Portal</div>
+          </div>
 
           <div className="flex space-x-6">
             <button
@@ -94,7 +116,7 @@ const Navbar = () => {
               <span>Home</span>
             </button>
 
-            <div className="relative">
+            <div className="relative" ref={projectsMenuRef}>
               <button
                 onClick={toggleProjectsMenu}
                 className={`flex items-center space-x-2 p-2 rounded-lg ${
@@ -155,7 +177,7 @@ const Navbar = () => {
               <Notifications />
             </div>
 
-            <div className="relative">
+            <div className="relative" ref={profileMenuRef}>
               <button
                 onClick={toggleProfileMenu}
                 className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg"

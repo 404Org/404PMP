@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import AuthErrorModal from './AuthErrorModal';
 
@@ -7,6 +7,7 @@ const NotificationsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const dropdownRef = useRef(null);
 
   const fetchNotifications = async () => {
     try {
@@ -39,6 +40,19 @@ const NotificationsDropdown = () => {
     setIsOpen(!isOpen);
     setIsActive(!isActive);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
@@ -115,7 +129,7 @@ const NotificationsDropdown = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={handleToggle}
         className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 ${isActive ? 'text-blue-500' : 'text-gray-600'}`}
