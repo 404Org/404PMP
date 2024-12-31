@@ -47,8 +47,8 @@ const CommentItem = ({
     <div className="bg-white p-4 rounded-lg shadow-sm border">
       <div className="flex gap-4">
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
-            {comment.user_name?.charAt(0).toUpperCase()}
+          <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white">
+            {comment.user_name?.charAt(0).toUpperCase()}{comment.user_name?.charAt(1).toUpperCase()}
           </div>
         </div>
         <div className="flex-grow">

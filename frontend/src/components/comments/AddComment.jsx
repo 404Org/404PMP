@@ -44,8 +44,8 @@ const AddComment = ({ projectId, onCommentAdded, replyTo, onCancelReply, user })
     <form onSubmit={handleSubmit} className="mb-6">
       <div className="flex gap-4">
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
-            {user?.name?.charAt(0).toUpperCase()}
+          <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white">
+            {user?.name?.charAt(0).toUpperCase()}{user?.name?.charAt(1).toUpperCase()}
           </div>
         </div>
         <div className="flex-grow">
@@ -68,7 +68,7 @@ const AddComment = ({ projectId, onCommentAdded, replyTo, onCancelReply, user })
             )}
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2"
+              className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-500 flex items-center gap-2"
             >
               <Send size={16} />
               {replyTo ? 'Post Reply' : 'Post Comment'}

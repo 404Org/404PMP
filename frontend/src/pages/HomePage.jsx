@@ -16,7 +16,7 @@ const HomePage = () => {
     const userData = localStorage.getItem('user');
 
     if (!token || !userData) {
-      <AuthErrorModal/>
+      <AuthErrorModal />
     }
 
     try {
@@ -52,7 +52,7 @@ const HomePage = () => {
           <div>
             <h1 className="text-6xl font-bold text-center mb-8">Project Portal</h1>
           </div>
-        <SearchBar />
+          <SearchBar />
         </div>
       </main>
     </div>

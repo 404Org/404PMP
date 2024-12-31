@@ -16,7 +16,7 @@ const ReplyItem = ({ reply, onDelete, onUpdate, user, canModify, canDelete }) =>
       <div className="flex gap-3">
         <div className="flex-shrink-0">
           <div className="w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center text-white text-sm">
-            {reply.user_name?.charAt(0).toUpperCase()}
+            {reply.user_name?.charAt(0).toUpperCase()}{reply.user_name?.charAt(1).toUpperCase()}
           </div>
         </div>
         <div className="flex-grow">

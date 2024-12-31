@@ -132,7 +132,7 @@ const NotificationsDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={handleToggle}
-        className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 ${isActive ? 'text-gray-600' : 'text-blue-500'}`}
+        className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 ${isOpen ? 'text-blue-500' : 'text-gray-600'}`}
       >
         <div className="relative">
           <Bell size={29} />

@@ -81,7 +81,7 @@ const ProjectDetails = () => {
                     )}
                     <button
                       onClick={() => navigate(`/projects/${id}/edit`)}
-                      className="px-4 py-2 ml-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 w-32"
+                      className="px-4 py-2 ml-2 bg-blue-400 text-white rounded-md hover:bg-blue-500 w-32"
                     >
                       Edit Project
                     </button>
@@ -143,15 +143,14 @@ const ProjectDetails = () => {
                   ),
                 ].map((member, index) => {
                   if (typeof member.name === 'string') {
-                    const firstChar = member.name.charAt(0);
                     return (
                       <div
                         key={index}
                         className="flex rounded-l-3xl p-1 items-center space-x-2 cursor-pointer hover:bg-gray-100"
                         onClick={() => navigate(`/users/${member.user_id}`)}
                       >
-                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                          {firstChar.toUpperCase()}
+                        <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white">
+                          {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
                         </div>
 
                         <span className="text-gray-700 text-base">
@@ -188,7 +187,7 @@ const ProjectDetails = () => {
             </div>
 
             {/* Additional Info Card */}
-            <div className="bg-white rounded-lg shadow-md p-6 w-100">
+            <div>
               <KnowledgeBaseManager />
             </div>
           </div>

@@ -40,7 +40,7 @@ const KnowledgeBaseManager = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-         
+
             if (response.status === 401 || !token) {
                 <AuthErrorModal />
             }
@@ -253,18 +253,18 @@ const KnowledgeBaseManager = () => {
     };
 
     return (
-        <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200 p-6 w-100">
             {alert.show && (
                 <div className={`p-4 rounded-md mb-4 ${alert.type === 'error'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-green-100 text-green-700'
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-green-100 text-green-700'
                     }`}>
                     {alert.message}
                 </div>
             )}
 
-            <div className="flex justify-between items-center p-4 border-b">
-                <h2 className="text-xl font-semibold text-gray-800">Project Knowledge Base</h2>
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-xl font-semibold">Project Knowledge Base</h1>
                 {isUserTeamMember && (
                     <button
                         onClick={() => setIsDialogOpen(true)}
@@ -274,98 +274,99 @@ const KnowledgeBaseManager = () => {
                     </button>
                 )}
             </div>
+            <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
 
-            {isDialogOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-96 p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Add Resource to Knowledge Base</h3>
-                            <button
-                                onClick={() => setIsDialogOpen(false)}
-                                className="p-1 rounded-full hover:bg-gray-100"
-                            >
-                                <X className="w-5 h-5 text-gray-600" />
-                            </button>
-                        </div>
-
-                        <div className="flex mb-4 border rounded-md">
-                            <button
-                                className={`flex-1 p-2 text-center flex items-center justify-center ${activeTab === 'link' ? 'bg-gray-100' : ''}`}
-                                onClick={() => setActiveTab('link')}
-                            >
-                                <Link className="mr-2 w-5 h-5" />
-                                Add Link
-                            </button>
-                            <button
-                                className={`flex-1 p-2 text-center flex items-center justify-center ${activeTab === 'upload' ? 'bg-gray-100' : ''}`}
-                                onClick={() => setActiveTab('upload')}
-                            >
-                                <Upload className="mr-2 w-5 h-5" />
-                                Upload File
-                            </button>
-                        </div>
-
-                        {activeTab === 'link' && (
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Name (Optional)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter resource name"
-                                        value={newLinkName}
-                                        onChange={(e) => setNewLinkName(e.target.value)}
-                                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        URL
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Paste URL here"
-                                        value={newLink}
-                                        onChange={(e) => setNewLink(e.target.value)}
-                                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <button
-                                        onClick={handleAddLink}
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-                                    >
-                                        Add
-                                    </button>
-                                </div>
+                {isDialogOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg shadow-xl w-96 p-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold">Add Resource to Knowledge Base</h3>
+                                <button
+                                    onClick={() => setIsDialogOpen(false)}
+                                    className="p-1 rounded-full hover:bg-gray-100"
+                                >
+                                    <X className="w-5 h-5 text-gray-600" />
+                                </button>
                             </div>
-                        )}
 
-                        {activeTab === 'upload' && (
-                            <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <Upload className="w-12 h-12 text-gray-400" />
-                                    <p className="mb-2 text-sm text-gray-500">
-                                        Click to upload or drag and drop
-                                    </p>
-                                    <p className="text-xs text-gray-400">
-                                        PDF, PPT, DOCX, XLSX (MAX. 10MB)
-                                    </p>
+                            <div className="flex mb-4 border rounded-md">
+                                <button
+                                    className={`flex-1 p-2 text-center flex items-center justify-center ${activeTab === 'link' ? 'bg-gray-100' : ''}`}
+                                    onClick={() => setActiveTab('link')}
+                                >
+                                    <Link className="mr-2 w-5 h-5" />
+                                    Add Link
+                                </button>
+                                <button
+                                    className={`flex-1 p-2 text-center flex items-center justify-center ${activeTab === 'upload' ? 'bg-gray-100' : ''}`}
+                                    onClick={() => setActiveTab('upload')}
+                                >
+                                    <Upload className="mr-2 w-5 h-5" />
+                                    Upload File
+                                </button>
+                            </div>
+
+                            {activeTab === 'link' && (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Name (Optional)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter resource name"
+                                            value={newLinkName}
+                                            onChange={(e) => setNewLinkName(e.target.value)}
+                                            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            URL
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Paste URL here"
+                                            value={newLink}
+                                            onChange={(e) => setNewLink(e.target.value)}
+                                            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <button
+                                            onClick={handleAddLink}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
                                 </div>
-                                <input
-                                    type="file"
-                                    className="hidden"
-                                    accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx"
-                                    onChange={handleFileUpload}
-                                />
-                            </label>
-                        )}
-                    </div>
-                </div>
-            )}
+                            )}
 
+                            {activeTab === 'upload' && (
+                                <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <Upload className="w-12 h-12 text-gray-400" />
+                                        <p className="mb-2 text-sm text-gray-500">
+                                            Click to upload or drag and drop
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            PDF, PPT, DOCX, XLSX (MAX. 10MB)
+                                        </p>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx"
+                                        onChange={handleFileUpload}
+                                    />
+                                </label>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
             {isEditDialogOpen && editingResource && isUserTeamMember && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg shadow-xl w-96 p-6">

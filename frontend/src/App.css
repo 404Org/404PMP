@@ -47,13 +47,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-}
-
-/* header */
-.ddNameIcon{
-  width: 3.5rem;
-  height: 3.5rem;
+  margin-top: 2rem;
+  /* align-items: center; */
 }
 
 .userDropdown{

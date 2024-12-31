@@ -114,7 +114,7 @@ const SearchBar = () => {
 
           {/* Search Results Dropdown */}
           {showResults && filteredProjects.length > 0 && (
-            <div className="absolute w-full mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
+            <div className="absolute w-full mt-2 bg-white rounded-lg shadow-lg max-h-80 overflow-y-auto z-50">
               {filteredProjects.map((project) => (
                 <div
                   key={project._id}

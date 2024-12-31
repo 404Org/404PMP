@@ -179,8 +179,8 @@ const Navbar = () => {
                 className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg"
               >
                 <div className="flex-shrink-0">
-                  <div className="w-10  h-10 bg-blue-400 rounded-full flex items-center justify-center text-white">
-                    {user.name?.charAt(0).toUpperCase()}
+                  <div className="w-10 h-10 font-semibold bg-blue-400 rounded-full flex items-center justify-center text-white">
+                    {user.name?.charAt(0).toUpperCase()}{user.name?.charAt(1).toUpperCase()}
                   </div>
                 </div>
                 {/* <div className="pt-2">
@@ -195,8 +195,8 @@ const Navbar = () => {
                   <div className="p-4">
                     <div className="flex items-center space-x-3 mb-4">
                       <div className="flex-shrink-0">
-                        <div className="ddNameIcon bg-blue-400 rounded-full flex items-center justify-center text-white">
-                          {user.name?.charAt(0).toUpperCase()}
+                        <div className="bg-blue-400 font-semibold text-2xl rounded-full flex items-center justify-center text-white w-14 h-14">
+                          {user.name?.charAt(0).toUpperCase()}{user.name?.charAt(1).toUpperCase()}
                         </div>
                       </div>
                       <div>

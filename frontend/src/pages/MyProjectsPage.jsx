@@ -115,7 +115,7 @@ const MyProjectsPage = () => {
 
                   {/* Admin Actions */}
                   {user?.role === 'admin' && (
-                    <div className="">
+                    <div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -172,14 +172,14 @@ const MyProjectsPage = () => {
                         {project.team_members.slice(0, 2).map((member) => (
                           <div
                             key={member.name}
-                            className="w-9 h-9 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
+                            className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
                             title={`${member.name}`}
                           >
-                            {member.name.charAt(0).toUpperCase()}
+                            {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
                           </div>
                         ))}
                         <div
-                          className="w-9 h-9 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
+                          className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
                           title={project.team_members.slice(2).map(member => member.name).join(', ')}>
                           +{project.team_members.length - 2}
                         </div>
@@ -191,7 +191,7 @@ const MyProjectsPage = () => {
                           className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
                           title={`${member.name}`}
                         >
-                          {member.name.charAt(0).toUpperCase()}
+                          {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
                         </div>
                       ))
                     )}
