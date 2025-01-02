@@ -84,22 +84,16 @@ const NewProjectsPage = () => {
       [project._id]: !prev[project._id],
     }));
 
-    const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications`, {
+    const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${project._id}/interested`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        user_id: project.project_manager.user_id,
-        type: 'project_interest',
-        content: `${user.name} is interested in project ${project.title}`,
-        reference_id: project._id,
-      }),
     });
 
     if (!response.ok) {
-      console.error('Failed to send notification');
+      console.error('Failed to add to interested list');
     }
   };
 
@@ -244,4 +238,4 @@ const NewProjectsPage = () => {
   );
 };
 
-export default NewProjectsPage; 
+export default NewProjectsPage;
