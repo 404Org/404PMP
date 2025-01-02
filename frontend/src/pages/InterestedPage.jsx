@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserCircle, CheckCircle, XCircle, Mail } from 'lucide-react';
+import { UserCircle, CheckCircle, XCircle, Mail, PlusCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AuthErrorModal from '../components/AuthErrorModal';
 
@@ -12,61 +12,22 @@ const InterestedPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
-
-  const [interestedUsers, setInterestedUsers] = useState([
-    {
-      id: 1,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      skills: ["React", "Node.js", "Python"],
-      matchingSkills: ["React", "Node.js"],
-      experience: "5 years",
-      status: "pending"
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      skills: ["JavaScript", "React", "MongoDB"],
-      matchingSkills: ["React"],
-      experience: "3 years",
-      status: "pending"
-    }
-  ]);
-
-  const [otherUsers, setOtherUsers] = useState([
-    {
-      id: 3,
-      name: "Alice Johnson",
-      email: "alice.j@example.com",
-      skills: ["Python", "Django", "PostgreSQL"],
-      matchingSkills: ["Python"],
-      experience: "4 years",
-      status: "pending"
-    },
-    {
-      id: 4,
-      name: "Bob Wilson",
-      email: "bob.w@example.com",
-      skills: ["React", "Vue.js", "TypeScript"],
-      matchingSkills: ["React"],
-      experience: "2 years",
-      status: "pending"
-    }
-  ]);
-
-  const [projectRequiredSkills] = useState([
-    "React",
-    "Node.js",
-    "Python",
-    "MongoDB"
-  ]);
+  const [interestedUsers, setInterestedUsers] = useState([]);
+  const [otherUsers, setOtherUsers] = useState([]);
+  const [projectRequiredSkills, setProjectRequiredSkills] = useState([]);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
     setUser(userData);
     fetchProject();
+    fetchInterestedUsers();
   }, [projectId]);
+
+  useEffect(() => {
+    if (project) {
+      fetchOtherUsers();
+    }
+  }, [project, interestedUsers]);
 
   const fetchProject = async () => {
     try {
@@ -88,6 +49,7 @@ const InterestedPage = () => {
 
       const data = await response.json();
       setProject(data.project);
+      setProjectRequiredSkills(data.project.tech_stack);
     } catch (err) {
       setError('Failed to fetch project details');
       console.error(err);
@@ -96,23 +58,149 @@ const InterestedPage = () => {
     }
   };
 
+  const fetchInterestedUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/interested`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch interested users');
+      }
+
+      const data = await response.json();
+      setInterestedUsers(data.interested_users);
+    } catch (err) {
+      setError('Failed to fetch interested users');
+      console.error(err);
+    }
+  };
+
+  const fetchOtherUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+
+      const data = await response.json();
+      
+      const filteredUsers = data.filter(user => {
+        const isNotTeamMember = !(project.team_members || []).some(
+          tm => tm.user_id === user._id
+        );
+        
+        const isNotInterested = !interestedUsers.some(
+          iu => iu.user_id === user._id
+        );
+        
+        return isNotTeamMember && isNotInterested;
+      });
+      
+      setOtherUsers(filteredUsers);
+    } catch (err) {
+      setError('Failed to fetch users');
+      console.error(err);
+    }
+  };
+
   const calculateMatchPercentage = (userSkills) => {
+    if (!userSkills || !Array.isArray(userSkills)) {
+      return 0;
+    }
     const matchingSkills = userSkills.filter(skill =>
       projectRequiredSkills.includes(skill)
     );
     return Math.round((matchingSkills.length / projectRequiredSkills.length) * 100);
   };
 
-  const handleAccept = (userId) => {
-    console.log('Accepted user:', userId);
+  const handleAccept = async (userId) => {
+    try {
+      console.log('Accepting user:', userId);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/interested/${userId}/accept`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error response:', errorData);
+        throw new Error('Failed to accept user');
+      }
+
+      fetchInterestedUsers();
+      fetchProject();
+    } catch (err) {
+      console.error('Failed to accept user', err);
+    }
   };
 
-  const handleReject = (userId) => {
-    console.log('Rejected user:', userId);
+  // const handleReject = async (userId) => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/interested/${userId}/reject`, {
+  //       method: 'POST',
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Failed to reject user');
+  //     }
+
+  //     fetchInterestedUsers();
+  //   } catch (err) {
+  //     console.error('Failed to reject user', err);
+  //   }
+  // };
+
+  const handleAddToProject = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${projectId}/team/add`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: userId })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error response:', errorData);
+        throw new Error(errorData.error || 'Failed to add user to project');
+      }
+
+      // Refresh the project data and other users list
+      await fetchProject();
+      await fetchOtherUsers();
+    } catch (err) {
+      console.error('Failed to add user to project:', err);
+      setError(err.message || 'Failed to add user to project');
+    }
   };
 
   const UsersList = ({ users }) => (
     <div className="space-y-4">
+      {project && project.tech_stack && (
       <div className="bg-slate-100 p-3 rounded-lg">
         <h3 className="font-medium mb-2">Required Project Skills:</h3>
         <div className="flex flex-wrap gap-2">
@@ -123,9 +211,9 @@ const InterestedPage = () => {
           ))}
         </div>
       </div>
-
+      )}
       {users.map(user => (
-        <div key={user.id} className="bg-white rounded-lg shadow-sm p-4">
+        <div key={user._id || user.user_id} className="bg-white rounded-lg shadow-sm p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
               <UserCircle className="h-12 w-12 text-slate-400" />
@@ -136,10 +224,10 @@ const InterestedPage = () => {
                 <div className="mt-2">
                   <p className="text-sm font-medium mb-1">Skills:</p>
                   <div className="flex flex-wrap gap-2">
-                    {user.skills.map(skill => (
+                    {Array.isArray(user.skills) && user.skills.map(skill => (
                       <span
                         key={skill}
-                        className={`px-2 py-1 text-sm rounded-full ${user.matchingSkills.includes(skill)
+                        className={`px-2 py-1 text-sm rounded-full ${user.matchingSkills && user.matchingSkills.includes(skill)
                             ? 'bg-blue-100 text-blue-700'
                             : 'bg-slate-200 text-slate-700'
                           }`}
@@ -165,20 +253,32 @@ const InterestedPage = () => {
             </div>
 
             <div className="flex flex-col gap-2">
-              <button
-                onClick={() => handleAccept(user.id)}
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                <CheckCircle className="h-4 w-4" />
-                Accept
-              </button>
-              <button
-                onClick={() => handleReject(user.id)}
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-              >
-                <XCircle className="h-4 w-4" />
-                Reject
-              </button>
+              {activeTab === 'interested' ? (
+                <>
+                  <button
+                  onClick={() => handleAccept(user._id)}
+                  className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  Add to Project
+                </button>
+                  {/* <button
+                    onClick={() => handleReject(user.user_id)}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    Reject
+                  </button> */}
+                </>
+              ) : (
+                <button
+                  onClick={() => handleAddToProject(user._id)}
+                  className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  Add to Project
+                </button>
+              )}
             </div>
           </div>
         </div>
