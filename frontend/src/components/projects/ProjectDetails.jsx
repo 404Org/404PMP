@@ -71,7 +71,7 @@ const ProjectDetails = () => {
                 <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
                 {user?.role === 'admin' && (
                   <div className="flex items-center">
-                    { project.status==="upcoming" && (
+                    { project.status==="upcoming" && project.project_manager.user_id===user._id && (
                       <button
                         onClick={handleInterestPage}
                         className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400`}
@@ -139,7 +139,7 @@ const ProjectDetails = () => {
                 {[
                   project.project_manager, // Add project manager first
                   ...project.team_members.filter(
-                    (member) => member.name !== project.project_manager.name
+                    (member) => member.user_id !== project.project_manager.user_id
                   ),
                 ].map((member, index) => {
                   if (typeof member.name === 'string') {
@@ -152,9 +152,10 @@ const ProjectDetails = () => {
                         <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white">
                           {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
                         </div>
+                        
 
                         <span className="text-gray-700 text-base">
-                          {member.name === project.project_manager.name
+                          {member?.user_id === project.project_manager.user_id
                             ? `${member.name} (PM)`
                             : member.name}
                         </span>

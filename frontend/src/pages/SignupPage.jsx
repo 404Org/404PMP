@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, AtSign, Briefcase, Star, FileText } from 'lucide-react';
+import TechStackCombobox from '../components/TechStackCombobox';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ const SignupPage = () => {
     email: '',
     designation: '',
     experience: '',
-    skills: '',
+    skills: [],
     bio: '',
     password: '',
     confirmPassword: '',
@@ -41,6 +42,13 @@ const SignupPage = () => {
     }
   };
 
+  const handleSkillsChange = (selectedSkills) => {
+    setFormData(prevState => ({
+      ...prevState,
+      skills: selectedSkills
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -70,7 +78,7 @@ const SignupPage = () => {
           email: formData.email,
           designation: formData.designation,
           experience: formData.experience,
-          skills: formData.skills.split(',').map(skill => skill.trim()),
+          skills: formData.skills,
           bio: formData.bio,
           password: formData.password,
           confirm_password: formData.confirmPassword
@@ -78,6 +86,7 @@ const SignupPage = () => {
       });
 
       const data = await response.json();
+      console.log('Response from server:', data);
 
       if (response.ok) {
         console.log('User created successfully:', data);
@@ -101,12 +110,12 @@ const SignupPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
         <h2 className="text-2xl font-bold text-center mb-6">Create Your Account</h2>
-        
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Name Input */}
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
+            <input
               type="text"
               name="name"
               value={formData.name}
@@ -120,7 +129,7 @@ const SignupPage = () => {
           {/* Email Input */}
           <div className="relative">
             <AtSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
+            <input
               type="email"
               name="email"
               value={formData.email}
@@ -129,10 +138,10 @@ const SignupPage = () => {
               placeholder="Email Address"
               required
               className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                emailError 
-                  ? 'border-red-500 focus:ring-red-500' 
+                emailError
+                  ? 'border-red-500 focus:ring-red-500'
                   : 'focus:ring-blue-500'
-              }`}
+                }`}
             />
           </div>
 
@@ -146,7 +155,7 @@ const SignupPage = () => {
           {/* Role Input */}
           <div className="relative">
             <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
+            <input
               type="text"
               name="designation"
               value={formData.designation}
@@ -160,7 +169,7 @@ const SignupPage = () => {
           {/* Experience Input */}
           <div className="relative">
             <Star className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
+            <input
               type="text"
               name="experience"
               value={formData.experience}
@@ -171,24 +180,18 @@ const SignupPage = () => {
             />
           </div>
 
-          {/* Skills Input */}
-          <div className="relative">
-            <Star className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
-              type="text"
-              name="skills"
-              value={formData.skills}
-              onChange={handleChange}
-              placeholder="Skills (comma-separated)"
-              required
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          {/* Replace the Skills Input with TechStackCombobox */}
+          <div className="mb-4">
+            <TechStackCombobox
+              selectedTechs={formData.skills}
+              onChange={handleSkillsChange}
             />
           </div>
 
           {/* Bio Input */}
           <div className="relative">
             <FileText className="absolute left-3 top-4 transform text-gray-400" size={20} />
-            <textarea 
+            <textarea
               name="bio"
               value={formData.bio}
               onChange={handleChange}
@@ -201,7 +204,7 @@ const SignupPage = () => {
           {/* Password Input */}
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
+            <input
               type="password"
               name="password"
               value={formData.password}
@@ -215,7 +218,7 @@ const SignupPage = () => {
           {/* Confirm Password Input */}
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
+            <input
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
@@ -223,10 +226,10 @@ const SignupPage = () => {
               placeholder="Confirm Password"
               required
               className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                passwordError 
-                  ? 'border-red-500 focus:ring-red-500' 
+                passwordError
+                  ? 'border-red-500 focus:ring-red-500'
                   : 'focus:ring-blue-500'
-              }`}
+                }`}
             />
           </div>
 
@@ -238,8 +241,8 @@ const SignupPage = () => {
           )}
 
           {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
             Create Account
@@ -247,7 +250,7 @@ const SignupPage = () => {
 
           {/* Login Redirect */}
           <p className="text-center mt-4 text-sm text-gray-600">
-            Already a user? 
+            Already a user?
             <a href="/" className="text-blue-500 ml-1 hover:underline">
               Go to Login
             </a>

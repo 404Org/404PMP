@@ -41,7 +41,7 @@ const MyProjectsPage = () => {
       const data = await response.json();
       // Filter projects based on whether the user is part of the team members
       const filteredProjects = data.projects.filter(project =>
-        project.team_members.some(member => member.name === userData.name)
+        project.team_members.some(member => member.user_id === userData._id)
       );
       setProjects(filteredProjects);
     } catch (err) {
