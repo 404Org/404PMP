@@ -207,4 +207,194 @@ def get_my_projects():
         return jsonify({"projects": projects}), 200
         
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@projects.route("/projects/<project_id>/team/add", methods=["POST"])
+@jwt_required()
+def add_team_member(project_id):
+    # Handle OPTIONS request
+    if request.method == "OPTIONS":
+        return jsonify({"message": "OK"}), 200
+
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+
+        user = UserService.get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        project = Project.get_project_by_id(project_id)
+        if not project:
+            return jsonify({"error": "Project not found"}), 404
+
+        # Add user to team members
+        team_member_details = {
+            'user_id': str(user['_id']),
+            'email': user['email'],
+            'name': user['name']
+        }
+        
+        # Check if user is already a team member
+        if any(tm['user_id'] == str(user['_id']) for tm in project.get('team_members', [])):
+            return jsonify({"error": "User is already a team member"}), 400
+
+        # Use the update operator directly
+        update_operation = {
+            '$push': {
+                'team_members': team_member_details
+            }
+        }
+        
+        result = Project.update_project(project_id, update_operation)
+
+        if result.modified_count:
+            # Create notification for the user
+            Notification.create_notification(
+                str(user['_id']),
+                'added_to_project',
+                f"You have been added to project '{project['title']}'",
+                project_id
+            )
+            return jsonify({"message": "User added to project successfully"}), 200
+        return jsonify({"error": "Failed to add user to project"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@projects.route("/projects/<project_id>/interested", methods=["POST"])
+@jwt_required()
+def add_interested_user(project_id):
+    try:
+        current_user = get_jwt_identity()
+        user = UserService.get_user_by_email(current_user)
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Get project and check if it exists
+        project = Project.get_project_by_id(project_id)
+        if not project:
+            return jsonify({"error": "Project not found"}), 404
+
+        # Check if user is already interested
+        if Project.is_user_interested(project, str(user['_id'])):
+            return jsonify({"error": "User already in interested list"}), 400
+
+        # Add user to interested list
+        user_details = {
+            'user_id': str(user['_id']),
+            'email': user['email'],
+            'name': user['name']
+        }
+        
+        result = Project.add_interested_user(project_id, user_details)
+
+        if result.modified_count:
+            return jsonify({"message": "Added to interested list successfully"}), 200
+        return jsonify({"error": "Failed to add to interested list"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@projects.route("/projects/<project_id>/interested/<user_id>", methods=["DELETE"])
+@jwt_required()
+def remove_interested_user(project_id, user_id):
+    try:
+        result = Project.remove_interested_user(project_id, user_id)
+
+        if result.modified_count:
+            return jsonify({"message": "Removed from interested list successfully"}), 200
+        return jsonify({"error": "User not found in interested list"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@projects.route("/projects/<project_id>/interested", methods=["GET"])
+@jwt_required()
+def get_interested_users(project_id):
+    try:
+        project = Project.get_project_by_id(project_id)
+        if not project:
+            return jsonify({"error": "Project not found"}), 404
+
+        interested_users = project.get('interested_users', [])
+        detailed_interested_users = []
+
+        for user in interested_users:
+            user_details = UserService.get_user_by_id(user['user_id'])
+            if user_details:
+                user['skills'] = user_details.get('skills', [])
+                user['experience'] = user_details.get('experience')
+                detailed_interested_users.append(user)
+
+        return jsonify({"interested_users": detailed_interested_users}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@projects.route("/projects/<project_id>/interested/<user_id>/accept", methods=["POST"])
+@jwt_required()
+def accept_interested_user(project_id, user_id):
+    try:
+        current_user = get_jwt_identity()
+        project = Project.get_project_by_id(project_id)
+
+        if not project:
+            return jsonify({"error": "Project not found"}), 404
+
+        # Verify if current user is project manager
+        if project['project_manager']['email'] != current_user:
+            return jsonify({"error": "Unauthorized. Only project manager can accept users"}), 403
+
+        user_to_accept = Project.get_interested_user(project, user_id)
+        if not user_to_accept:
+            return jsonify({"error": "User not found in interested list"}), 404
+
+        result = Project.accept_interested_user(project_id, user_to_accept)
+
+        if result.modified_count:
+            # Create notification for accepted user
+            Notification.create_notification(
+                user_id,
+                'project_acceptance',
+                f"You have been accepted to join project '{project['title']}'",
+                project_id
+            )
+            return jsonify({"message": "User accepted and added to team successfully"}), 200
+        return jsonify({"error": "Failed to accept user"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@projects.route("/projects/<project_id>/interested/<user_id>/reject", methods=["POST"])
+@jwt_required()
+def reject_interested_user(project_id, user_id):
+    try:
+        current_user = get_jwt_identity()
+        project = Project.get_project_by_id(project_id)
+
+        if not project:
+            return jsonify({"error": "Project not found"}), 404
+
+        # Verify if current user is project manager
+        if project['project_manager']['email'] != current_user:
+            return jsonify({"error": "Unauthorized. Only project manager can reject users"}), 403
+
+        result = Project.reject_interested_user(project_id, user_id)
+
+        if result.modified_count:
+            # Create notification for rejected user
+            Notification.create_notification(
+                user_id,
+                'project_rejection',
+                f"Your request to join project '{project['title']}' has been declined",
+                project_id
+            )
+            return jsonify({"message": "User rejected successfully"}), 200
+        return jsonify({"error": "User not found in interested list"}), 404
+
+    except Exception as e:
         return jsonify({"error": str(e)}), 500 
