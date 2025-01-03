@@ -162,7 +162,7 @@ const NewProjectsPage = () => {
                         </button>
 
                         {showActions === project._id && (
-                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
+                          <div className="absolute right-0 mt-2 w-38 bg-white rounded-lg shadow-lg border border-gray-200">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -234,11 +234,11 @@ const NewProjectsPage = () => {
                   <button
                     type="button"
                     onClick={() => handleInterestToggle(project)}
-                    className={`flex items-center px-4 py-2 rounded-md transition ${checkUserStatus(project) === 'not_interested' ? 'bg-green-600' : 'bg-blue-400'} text-white`}
+                    className={`flex items-center px-4 py-2 rounded-md transition ${checkUserStatus(project) === 'not_interested' ? 'bg-blue-400' : 'bg-blue-500'} text-white`}
                     disabled={checkUserStatus(project) !== 'not_interested'}
                   >
-                    {checkUserStatus(project) === 'joined' ? 'Already joined project' :
-                      checkUserStatus(project) === 'requested' ? 'Your request sent' :
+                    {checkUserStatus(project) === 'joined' ? 'Onboarded' :
+                      checkUserStatus(project) === 'requested' ? 'Request sent' :
                         "I'm Interested"}
                   </button>
                 </div>

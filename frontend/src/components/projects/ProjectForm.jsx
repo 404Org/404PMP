@@ -331,8 +331,8 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
                 <div className="flex items-center">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-2">
-                    {user.name?.charAt(0)?.toUpperCase() || '?'}
+                  <div className="w-9 h-9 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white mr-2">
+                    {user.name?.charAt(0)?.toUpperCase() || '?'}{user.name?.charAt(1)?.toUpperCase()}
                   </div>
                   <div>
                     <div className="font-medium">{user.name || 'Unknown'}</div>
@@ -349,8 +349,8 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           {formData.team_members.map(member => (
             <div key={member.user_id} className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-2">
-                  {member.name?.charAt(0)?.toUpperCase() || '?'}
+                <div className="w-9 h-9 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white mr-2">
+                  {member.name?.charAt(0)?.toUpperCase() || '?'}{member.name?.charAt(1)?.toUpperCase()}
                 </div>
                 <div>
                   <div className="font-medium">{member.name || 'Unknown'}</div>
@@ -391,8 +391,8 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
                 <div className="flex items-center">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-2">
-                    {user.name?.charAt(0)?.toUpperCase() || '?'}
+                  <div className="w-9 h-9 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white mr-2">
+                    {user.name?.charAt(0)?.toUpperCase() || '?'}{user.name?.charAt(1)?.toUpperCase()}
                   </div>
                   <div>
                     <div className="font-medium">{user.name || 'Unknown'}</div>
@@ -409,8 +409,8 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
           <div className="mt-2">
             <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-2">
-                  {formData.project_manager.name?.charAt(0)?.toUpperCase() || '?'}
+                <div className="w-9 h-9 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white mr-2">
+                  {formData.project_manager.name?.charAt(0)?.toUpperCase() || '?'}{formData.project_manager.name?.charAt(1)?.toUpperCase()}
                 </div>
                 <div>
                   <div className="font-medium">{formData.project_manager.name || 'Unknown'}</div>

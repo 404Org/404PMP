@@ -69,9 +69,9 @@ const ProjectDetails = () => {
             <div className="bg-white rounded-lg shadow-md p-6 ml-60">
               <div className="flex justify-between items-start mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
-                {user?.role === 'admin' && (
+                {user?.role === 'admin' && project.project_manager.user_id===user._id && (
                   <div className="flex items-center">
-                    { project.status==="upcoming" && project.project_manager.user_id===user._id && (
+                    { project.status==="upcoming" (
                       <button
                         onClick={handleInterestPage}
                         className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400`}
@@ -149,7 +149,7 @@ const ProjectDetails = () => {
                         className="flex rounded-l-3xl p-1 items-center space-x-2 cursor-pointer hover:bg-gray-100"
                         onClick={() => navigate(`/users/${member.user_id}`)}
                       >
-                        <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white">
+                        <div className="w-10 h-10 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white">
                           {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
                         </div>
                         

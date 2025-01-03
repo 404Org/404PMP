@@ -127,7 +127,7 @@ const MyProjectsPage = () => {
                       </button>
 
                       {showActions === project._id && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
+                        <div className="absolute right-0 mt-2 w-38 bg-white rounded-lg shadow-lg border border-gray-200">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
