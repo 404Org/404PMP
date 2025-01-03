@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -12,6 +12,20 @@ const NewProjectsPage = () => {
   const [user, setUser] = useState(null);
   const [interestedProjects, setInterestedProjects] = useState({});
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowActions(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
@@ -149,8 +163,8 @@ const NewProjectsPage = () => {
                     </span>
 
                     {/* Admin Actions */}
-                    {user?.role === 'admin' && (
-                      <div>
+                    {user?.role === 'admin' && project.project_manager.user_id === user._id && (
+                      <div ref={dropdownRef}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();

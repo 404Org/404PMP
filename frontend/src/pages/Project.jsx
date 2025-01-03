@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -11,11 +11,25 @@ const ProjectList = () => {
   const [showActions, setShowActions] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
     setUser(userData);
     fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowActions(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const fetchProjects = async () => {
@@ -110,12 +124,12 @@ const ProjectList = () => {
                       {project.status.replace('_', ' ')}
                     </span>
                   {/* Admin Actions */}
-                  {user?.role === 'admin' && (
-                    <div>
+                  {user?.role === 'admin' && project.project_manager.user_id===user._id && (
+                    <div ref={dropdownRef}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowActions(showActions === project._id ? null : project._id)
+                          setShowActions(showActions === project._id ? null : project._id);
                         }}
                         className="p-1 hover:bg-gray-100 rounded-full"
                       >

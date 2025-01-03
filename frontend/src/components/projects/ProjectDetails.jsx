@@ -71,7 +71,7 @@ const ProjectDetails = () => {
                 <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
                 {user?.role === 'admin' && project.project_manager.user_id===user._id && (
                   <div className="flex items-center">
-                    { project.status==="upcoming" (
+                    { project.status==="upcoming" && (
                       <button
                         onClick={handleInterestPage}
                         className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400`}
