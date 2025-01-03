@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     User,
     Mail,
@@ -24,23 +24,53 @@ const UserProfileEdit = () => {
     const [isSaved, setIsSaved] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [profileData, setProfileData] = useState({
-        name: userData.name,
-        email: userData.email,
-        designation: userData.designation,
-        bio: userData.bio,
-        experience: userData.experience,
-        skills: userData.skills,
+        name: '',
+        email: '',
+        designation: '',
+        bio: '',
+        experience: '',
+        skills: '',
         avatar: null,
     });
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const userId = localStorage.getItem('_id');
+                const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-    // const handleInputChange = (e) => {
-    //     const { name, value, files } = e.target;
-    //     setProfileData((prevState) => ({
-    //         ...prevState,
-    //         [name]: files ? files[0] : value,
-    //     }));
-    // };
+                if (response.ok) {
+                    const data = await response.json();
+                    setProfileData({
+                        name: data.name || '',
+                        email: data.email || '',
+                        designation: data.designation || '',
+                        bio: data.bio || '',
+                        experience: data.experience || '',
+                        skills: data.skills || '',
+                        avatar: null,
+                    });
+                    setUserData(data);
+                } else if (response.status === 401 || !token) {
+                    <AuthErrorModal />
+                } else {
+                    const data = await response.json();
+                    setError(data.error || 'Failed to fetch profile data');
+                }
+            } catch (error) {
+                setError('An error occurred while fetching profile data');
+            }
+        };
+
+        fetchUserData();
+    }, [setUserData]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
