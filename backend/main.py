@@ -12,7 +12,7 @@ from notifications.routes import notifications
 from knowledge_base.routes import knowledge_base
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://new-eight-navy.vercel.app"}})
 
 # Configurations
 app.config["MONGO_URI"] = MONGO_URI
