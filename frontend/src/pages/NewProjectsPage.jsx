@@ -97,6 +97,16 @@ const NewProjectsPage = () => {
     }
   };
 
+  const checkUserStatus = (project) => {
+    if (project.team_members.some(member => member.user_id === user._id)) {
+      return 'joined';
+    }
+    if (project.interested_users.some(interested => interested.user_id === user._id)) {
+      return 'requested';
+    }
+    return 'not_interested';
+  };
+
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-600">{error}</div>;
 
@@ -224,9 +234,12 @@ const NewProjectsPage = () => {
                   <button
                     type="button"
                     onClick={() => handleInterestToggle(project)}
-                    className={`flex items-center px-4 py-2 rounded-md transition ${interestedProjects[project._id] ? 'bg-green-600' : 'bg-blue-400'} text-white`}
+                    className={`flex items-center px-4 py-2 rounded-md transition ${checkUserStatus(project) === 'not_interested' ? 'bg-green-600' : 'bg-blue-400'} text-white`}
+                    disabled={checkUserStatus(project) !== 'not_interested'}
                   >
-                    I'm Interested
+                    {checkUserStatus(project) === 'joined' ? 'Already joined project' :
+                      checkUserStatus(project) === 'requested' ? 'Your request sent' :
+                        "I'm Interested"}
                   </button>
                 </div>
               </div>

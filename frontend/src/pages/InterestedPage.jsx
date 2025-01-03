@@ -256,7 +256,7 @@ const InterestedPage = () => {
               {activeTab === 'interested' ? (
                 <>
                   <button
-                  onClick={() => handleAccept(user._id)}
+                  onClick={() => handleAccept(user.user_id)}
                   className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                 >
                   <PlusCircle className="h-4 w-4" />
