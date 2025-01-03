@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -12,9 +12,22 @@ const MyProjectsPage = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('user'));
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowActions(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
     setUser(userData);
     fetchProjects(userData);
   }, []);
@@ -34,9 +47,9 @@ const MyProjectsPage = () => {
       }
 
       if (response.status === 401 || !token) {
-        <AuthErrorModal/>
+        <AuthErrorModal />
       }
-      
+
 
       const data = await response.json();
       // Filter projects based on whether the user is part of the team members
@@ -51,7 +64,7 @@ const MyProjectsPage = () => {
       setIsLoading(false);
     }
   };
- 
+
   const handleDelete = async (projectId) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
 
@@ -70,7 +83,7 @@ const MyProjectsPage = () => {
       }
 
       if (response.status === 401 || !token) {
-        <AuthErrorModal/>
+        <AuthErrorModal />
       }
 
       fetchProjects(userData);
@@ -113,47 +126,47 @@ const MyProjectsPage = () => {
                       {project.status.replace('_', ' ')}
                     </span>
 
-                  {/* Admin Actions */}
-                  {user?.role === 'admin' && (
-                    <div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowActions(showActions === project._id ? null : project._id)
-                        }}
-                        className="p-1 hover:bg-gray-100 rounded-full"
-                      >
-                        <MoreVertical className="w-5 h-5 text-gray-600" />
-                      </button>
+                    {/* Admin Actions */}
+                    {user?.role === 'admin' && project.project_manager.user_id === user._id && (
+                      <div ref={dropdownRef}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowActions(showActions === project._id ? null : project._id)
+                          }}
+                          className="p-1 hover:bg-gray-100 rounded-full"
+                        >
+                          <MoreVertical className="w-5 h-5 text-gray-600" />
+                        </button>
 
-                      {showActions === project._id && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/projects/${project._id}/edit`);
-                            }}
-                            className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
-                          >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit Project
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(project._id);
-                            }}
-                            className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete Project
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                        {showActions === project._id && (
+                          <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/projects/${project._id}/edit`);
+                              }}
+                              className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                            >
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit Project
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(project._id);
+                              }}
+                              className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete Project
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                  
+
                   </div>
 
                   {/* Description with fixed height */}

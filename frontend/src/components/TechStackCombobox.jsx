@@ -30,11 +30,11 @@ const TechStackCombobox = ({ selectedTechs, onChange }) => {
     "Web Technologies": [
       "HTML5",
       "CSS3",
-      "React.js",
+      "ReactJs",
       "Angular",
-      "Vue.js",
-      "Node.js",
-      "Express.js",
+      "VueJs",
+      "NodeJs",
+      "ExpressJs",
       "Django",
       "Spring Framework",
       "ASP.NET",
@@ -169,14 +169,30 @@ const TechStackCombobox = ({ selectedTechs, onChange }) => {
       <div className="space-y-2">
         <div className="relative">
           <Layers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleCustomTechAdd}
-            placeholder="Type to search or add custom tech..."
-            className="w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500"
-          />
-          
+          <div className="w-full pl-10 pr-3 py-2 border rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 flex flex-wrap items-center gap-2">
+            {localSelectedTechs.map((tech) => (
+              <span
+                key={tech}
+                className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-sm flex items-center gap-1"
+              >
+                {tech}
+                <button
+                  onClick={() => handleRemoveTech(tech)}
+                  className="hover:text-blue-900"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleCustomTechAdd}
+              placeholder={localSelectedTechs.length === 0 ? "Skills" : ""}
+              className="flex-1 outline-none min-w-[150px]"
+            />
+          </div>
+
           {searchTerm && (
             <div className="absolute z-50 w-full mt-1 bg-white rounded-md shadow-lg border max-h-40 overflow-y-auto">
               {Object.entries(filteredTechStacks).map(([category, techs]) => (
@@ -203,25 +219,6 @@ const TechStackCombobox = ({ selectedTechs, onChange }) => {
             </div>
           )}
         </div>
-
-        {localSelectedTechs.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {localSelectedTechs.map((tech) => (
-              <span
-                key={tech}
-                className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1"
-              >
-                {tech}
-                <button
-                  onClick={() => handleRemoveTech(tech)}
-                  className="hover:text-blue-900"
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
