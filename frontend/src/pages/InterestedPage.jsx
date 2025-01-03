@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserCircle, CheckCircle, XCircle, Mail, PlusCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Mail, PlusCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AuthErrorModal from '../components/AuthErrorModal';
 
@@ -95,19 +95,19 @@ const InterestedPage = () => {
       }
 
       const data = await response.json();
-      
+
       const filteredUsers = data.filter(user => {
         const isNotTeamMember = !(project.team_members || []).some(
           tm => tm.user_id === user._id
         );
-        
+
         const isNotInterested = !interestedUsers.some(
           iu => iu.user_id === user._id
         );
-        
+
         return isNotTeamMember && isNotInterested;
       });
-      
+
       setOtherUsers(filteredUsers);
     } catch (err) {
       setError('Failed to fetch users');
@@ -201,22 +201,24 @@ const InterestedPage = () => {
   const UsersList = ({ users }) => (
     <div className="space-y-4">
       {project && project.tech_stack && (
-      <div className="bg-slate-100 p-3 rounded-lg">
-        <h3 className="font-medium mb-2">Required Project Skills:</h3>
-        <div className="flex flex-wrap gap-2">
-          {project.tech_stack.map(skill => (
-            <span key={skill} className="px-2 py-1 bg-slate-200 text-slate-700 text-sm rounded-full">
-              {skill}
-            </span>
-          ))}
+        <div className="bg-slate-100 p-3 rounded-lg">
+          <h3 className="font-medium mb-2">Required Project Skills:</h3>
+          <div className="flex flex-wrap gap-2">
+            {project.tech_stack.map(skill => (
+              <span key={skill} className="px-2 py-1 bg-slate-200 text-slate-700 text-sm rounded-full">
+                {skill}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
       )}
       {users.map(user => (
         <div key={user._id || user.user_id} className="bg-white rounded-lg shadow-sm p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
-              <UserCircle className="h-12 w-12 text-slate-400" />
+              <div className="w-10 h-10 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white">
+                {user.name.charAt(0).toUpperCase()}{user.name.charAt(1).toUpperCase()}
+              </div>
               <div>
                 <h3 className="font-medium text-lg">{user.name}</h3>
                 <p className="text-sm text-slate-500">{user.experience} experience</p>
@@ -228,8 +230,8 @@ const InterestedPage = () => {
                       <span
                         key={skill}
                         className={`px-2 py-1 text-sm rounded-full ${user.matchingSkills && user.matchingSkills.includes(skill)
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-slate-200 text-slate-700'
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'bg-slate-200 text-slate-700'
                           }`}
                       >
                         {skill}
@@ -256,12 +258,12 @@ const InterestedPage = () => {
               {activeTab === 'interested' ? (
                 <>
                   <button
-                  onClick={() => handleAccept(user.user_id)}
-                  className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                >
-                  <PlusCircle className="h-4 w-4" />
-                  Add to Project
-                </button>
+                    onClick={() => handleAccept(user.user_id)}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                  >
+                    <PlusCircle className="h-4 w-4" />
+                    Add to Project
+                  </button>
                   {/* <button
                     onClick={() => handleReject(user.user_id)}
                     className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -298,8 +300,8 @@ const InterestedPage = () => {
             <button
               onClick={() => setActiveTab('interested')}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'interested'
-                  ? 'bg-white shadow-sm'
-                  : 'text-slate-600 hover:bg-white/50'
+                ? 'bg-white shadow-sm'
+                : 'text-slate-600 hover:bg-white/50'
                 }`}
             >
               Interested Users ({interestedUsers.length})
@@ -307,8 +309,8 @@ const InterestedPage = () => {
             <button
               onClick={() => setActiveTab('other')}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'other'
-                  ? 'bg-white shadow-sm'
-                  : 'text-slate-600 hover:bg-white/50'
+                ? 'bg-white shadow-sm'
+                : 'text-slate-600 hover:bg-white/50'
                 }`}
             >
               Other Users ({otherUsers.length})

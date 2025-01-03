@@ -252,7 +252,7 @@ const NewProjectsPage = () => {
                     disabled={checkUserStatus(project) !== 'not_interested'}
                   >
                     {checkUserStatus(project) === 'joined' ? 'Onboarded' :
-                      checkUserStatus(project) === 'requested' ? 'Request sent' :
+                      checkUserStatus(project) === 'requested' ? 'Request Sent' :
                         "I'm Interested"}
                   </button>
                 </div>
