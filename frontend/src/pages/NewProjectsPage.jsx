@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -12,6 +12,20 @@ const NewProjectsPage = () => {
   const [user, setUser] = useState(null);
   const [interestedProjects, setInterestedProjects] = useState({});
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowActions(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
@@ -149,8 +163,8 @@ const NewProjectsPage = () => {
                     </span>
 
                     {/* Admin Actions */}
-                    {user?.role === 'admin' && (
-                      <div>
+                    {user?.role === 'admin' && project.project_manager.user_id === user._id && (
+                      <div ref={dropdownRef}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -162,7 +176,7 @@ const NewProjectsPage = () => {
                         </button>
 
                         {showActions === project._id && (
-                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
+                          <div className="absolute right-0 mt-2 w-38 bg-white rounded-lg shadow-lg border border-gray-200">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -234,11 +248,11 @@ const NewProjectsPage = () => {
                   <button
                     type="button"
                     onClick={() => handleInterestToggle(project)}
-                    className={`flex items-center px-4 py-2 rounded-md transition ${checkUserStatus(project) === 'not_interested' ? 'bg-green-600' : 'bg-blue-400'} text-white`}
+                    className={`flex items-center px-4 py-2 rounded-md transition ${checkUserStatus(project) === 'not_interested' ? 'bg-blue-400' : 'bg-blue-500'} text-white`}
                     disabled={checkUserStatus(project) !== 'not_interested'}
                   >
-                    {checkUserStatus(project) === 'joined' ? 'Already joined project' :
-                      checkUserStatus(project) === 'requested' ? 'Your request sent' :
+                    {checkUserStatus(project) === 'joined' ? 'Onboarded' :
+                      checkUserStatus(project) === 'requested' ? 'Request Sent' :
                         "I'm Interested"}
                   </button>
                 </div>
