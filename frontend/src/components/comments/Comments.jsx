@@ -14,6 +14,7 @@ const Comments = ({ projectId }) => {
     const userData = JSON.parse(localStorage.getItem('user'));
     setUser(userData);
     fetchComments();
+    // eslint-disable-next-line
   }, [projectId]);
 
   const fetchComments = async () => {

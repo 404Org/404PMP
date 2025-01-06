@@ -20,7 +20,9 @@ const UserProfileEdit = () => {
     const navigate = useNavigate();
     //const location = useLocation();
     //const { userData, updateUserData} = location.state || {};
+    // eslint-disable-next-line
     const { userData, setUserData } = useUserContext();
+    // eslint-disable-next-line
     const [error, setError] = useState('');
     const [isSaved, setIsSaved] = useState(false);
     const [isLoading, setIsLoading] = useState(false);

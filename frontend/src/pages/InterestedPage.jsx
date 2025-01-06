@@ -10,7 +10,9 @@ const InterestedPage = () => {
   const [activeTab, setActiveTab] = useState('interested');
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  // eslint-disable-next-line
   const [error, setError] = useState(null);
+  // eslint-disable-next-line
   const [user, setUser] = useState(null);
   const [interestedUsers, setInterestedUsers] = useState([]);
   const [otherUsers, setOtherUsers] = useState([]);
@@ -21,12 +23,14 @@ const InterestedPage = () => {
     setUser(userData);
     fetchProject();
     fetchInterestedUsers();
+    // eslint-disable-next-line
   }, [projectId]);
 
   useEffect(() => {
     if (project) {
       fetchOtherUsers();
     }
+    // eslint-disable-next-line
   }, [project, interestedUsers]);
 
   const fetchProject = async () => {

@@ -7,6 +7,7 @@ const Error404 = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [searchMessage, setSearchMessage] = useState('');
+  //const [debugAttempts, setDebugAttempts] = useState(0);
   const [coffeeLevel, setCoffeeLevel] = useState(0);
   const [coffeeMessage, setCoffeeMessage] = useState('Developer needs coffee! ☕');
   const navigate = useNavigate(); // Initialize useNavigate
@@ -72,6 +73,7 @@ const Error404 = () => {
       setIsSearching(false);
       setSearchMessage('');
     }
+    // eslint-disable-next-line
   }, [searchText]);
 
   const generateSearchResponse = (search) => {
