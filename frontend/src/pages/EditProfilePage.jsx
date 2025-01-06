@@ -6,7 +6,8 @@ import {
     FileText,
     Star,
     Camera,
-    Loader2
+    Loader2,
+    Layers
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
@@ -29,9 +30,132 @@ const UserProfileEdit = () => {
         designation: '',
         bio: '',
         experience: '',
-        skills: '',
+        skills: [],
         avatar: null,
     });
+    const [skillInput, setSkillInput] = useState('');
+
+    // Predefined skills list
+    const suggestedSkills = {
+        "Programming Languages": [
+            "JavaScript",
+            "Python",
+            "Java",
+            "C++",
+            "C#",
+            "Ruby",
+            "PHP",
+            "Swift",
+            "TypeScript",
+            "Go",
+            "Kotlin",
+            "R",
+            "MATLAB",
+            "Scala",
+            "Rust"
+        ],
+        "Web Technologies": [
+            "HTML5",
+            "CSS3",
+            "ReactJs",
+            "Angular",
+            "VueJs",
+            "NodeJs",
+            "ExpressJs",
+            "Django",
+            "Spring Framework",
+            "ASP.NET",
+            "Ruby on Rails",
+            "Laravel",
+            "jQuery",
+            "Bootstrap",
+            "Tailwind CSS",
+            "webpack",
+            "REST APIs",
+            "GraphQL"
+        ],
+        "Databases": [
+            "SQL",
+            "MySQL",
+            "PostgreSQL",
+            "MongoDB",
+            "Oracle Database",
+            "Microsoft SQL Server",
+            "Redis",
+            "Elasticsearch",
+            "Cassandra",
+            "Firebase"
+        ],
+        "Cloud Platforms": [
+            "Amazon Web Services (AWS)",
+            "Microsoft Azure",
+            "Google Cloud Platform",
+            "Heroku",
+            "DigitalOcean",
+            "Cloudflare"
+        ],
+        "DevOps & Tools": [
+            "Git",
+            "Docker",
+            "Kubernetes",
+            "Jenkins",
+            "Linux",
+            "JIRA",
+            "Confluence",
+            "Maven",
+            "Gradle",
+            "npm",
+            "Terraform",
+            "Ansible"
+        ],
+        "Testing": [
+            "Unit Testing",
+            "Jest",
+            "Selenium",
+            "JUnit",
+            "TestNG",
+            "Cypress",
+            "Mocha",
+            "PHPUnit"
+        ],
+        "AI/ML & Data": [
+            "Machine Learning",
+            "TensorFlow",
+            "PyTorch",
+            "scikit-learn",
+            "Pandas",
+            "NumPy",
+            "Apache Spark",
+            "Power BI",
+            "Tableau",
+            "SAS"
+        ],
+        "Mobile Development": [
+            "iOS Development",
+            "Android Development",
+            "React Native",
+            "Flutter",
+            "Xamarin",
+            "SwiftUI",
+            "Kotlin Android"
+        ],
+        "Project Management": [
+            "Agile Methodologies",
+            "Scrum",
+            "Kanban",
+            "Waterfall",
+            "Project Planning",
+            "Team Leadership"
+        ],
+        "Design Tools": [
+            "Figma",
+            "Adobe XD",
+            "Sketch",
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            "InVision"
+        ]
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -54,7 +178,7 @@ const UserProfileEdit = () => {
                         designation: data.designation || '',
                         bio: data.bio || '',
                         experience: data.experience || '',
-                        skills: data.skills || '',
+                        skills: typeof data.skills === 'string' ? data.skills.split(',').filter(Boolean) : (data.skills || []),
                         avatar: null,
                     });
                     setUserData(data);
@@ -77,13 +201,18 @@ const UserProfileEdit = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
+            const dataToSend = {
+                ...profileData,
+                skills: profileData.skills.join(',')
+            };
+
             const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/users/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(profileData)
+                body: JSON.stringify(dataToSend)
             });
 
             if (response.ok) {
@@ -117,6 +246,30 @@ const UserProfileEdit = () => {
     const handleCancelButton = () => {
         setIsSaved(false);
         navigate('/viewprofile')
+    };
+
+    const handleAddSkill = (skill) => {
+        if (skill && !profileData.skills.includes(skill)) {
+            setProfileData(prev => ({
+                ...prev,
+                skills: [...prev.skills, skill]
+            }));
+        }
+        setSkillInput('');
+    };
+
+    const handleRemoveSkill = (skillToRemove) => {
+        setProfileData(prev => ({
+            ...prev,
+            skills: prev.skills.filter(skill => skill !== skillToRemove)
+        }));
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && skillInput.trim()) {
+            e.preventDefault();
+            handleAddSkill(skillInput.trim());
+        }
     };
 
     return (
@@ -225,15 +378,59 @@ const UserProfileEdit = () => {
                         <div className="relative">
                             <label className="block text-gray-700 mb-2">Professional Skills</label>
                             <div className="relative">
-                                <Star className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                                <input
-                                    type="text"
-                                    name="skills"
-                                    value={profileData.skills}
-                                    onChange={(e) => setProfileData({ ...profileData, skills: e.target.value })}
-                                    placeholder="List your skills (comma-separated)"
-                                    className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
+                                <Layers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <div className="w-full pl-10 pr-3 py-2 border rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 flex flex-wrap items-center gap-2">
+                                    {profileData.skills.map((skill) => (
+                                        <span
+                                            key={skill}
+                                            className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-sm flex items-center gap-1"
+                                        >
+                                            {skill}
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveSkill(skill)}
+                                                className="hover:text-blue-900"
+                                            >
+                                                ×
+                                            </button>
+                                        </span>
+                                    ))}
+                                    <input
+                                        type="text"
+                                        value={skillInput}
+                                        onChange={(e) => setSkillInput(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                        placeholder={profileData.skills.length === 0 ? "Add skills..." : ""}
+                                        className="flex-1 outline-none min-w-[150px]"
+                                    />
+                                </div>
+
+                                {/* Dropdown for suggestions */}
+                                {skillInput && (
+                                    <div className="absolute z-50 w-full mt-1 bg-white rounded-md shadow-lg border max-h-40 overflow-y-auto">
+                                        {Object.entries(suggestedSkills).map(([category, skills]) => (
+                                            <div key={category}>
+                                                {skills.filter(skill =>
+                                                    skill.toLowerCase().includes(skillInput.toLowerCase()) &&
+                                                    !profileData.skills.includes(skill)
+                                                ).map((skill) => (
+                                                    <div
+                                                        key={skill}
+                                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                        onClick={() => handleAddSkill(skill)}
+                                                    >
+                                                        {skill}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))}
+                                        {skillInput && !Object.values(suggestedSkills).flat().includes(skillInput) && (
+                                            <div className="px-4 py-2 text-gray-500 text-sm">
+                                                Press Enter to add "{skillInput}" as a new skill
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
