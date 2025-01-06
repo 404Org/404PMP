@@ -141,7 +141,9 @@ const MyProjectsPage = () => {
                         </button>
 
                         {showActions === project._id && (
-                          <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200">
+                          <div 
+                            ref={dropdownRef}
+                            className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
