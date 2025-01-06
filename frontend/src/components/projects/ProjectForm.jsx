@@ -57,6 +57,130 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
   const [error, setError] = React.useState(null);
   const navigate = useNavigate();
   const [errors, setErrors] = React.useState({}); // State for error messages
+  const [techStackInput, setTechStackInput] = useState('');
+  const [showTechSuggestions, setShowTechSuggestions] = useState(false);
+
+  // Add this predefined tech stack list
+  const suggestedTechStack = {
+    "Programming Languages": [
+            "JavaScript",
+            "Python",
+            "Java",
+            "C++",
+            "C#",
+            "Ruby",
+            "PHP",
+            "Swift",
+            "TypeScript",
+            "Go",
+            "Kotlin",
+            "R",
+            "MATLAB",
+            "Scala",
+            "Rust"
+        ],
+        "Web Technologies": [
+            "HTML5",
+            "CSS3",
+            "ReactJs",
+            "Angular",
+            "VueJs",
+            "NodeJs",
+            "ExpressJs",
+            "Django",
+            "Spring Framework",
+            "ASP.NET",
+            "Ruby on Rails",
+            "Laravel",
+            "jQuery",
+            "Bootstrap",
+            "Tailwind CSS",
+            "webpack",
+            "REST APIs",
+            "GraphQL"
+        ],
+        "Databases": [
+            "SQL",
+            "MySQL",
+            "PostgreSQL",
+            "MongoDB",
+            "Oracle Database",
+            "Microsoft SQL Server",
+            "Redis",
+            "Elasticsearch",
+            "Cassandra",
+            "Firebase"
+        ],
+        "Cloud Platforms": [
+            "Amazon Web Services (AWS)",
+            "Microsoft Azure",
+            "Google Cloud Platform",
+            "Heroku",
+            "DigitalOcean",
+            "Cloudflare"
+        ],
+        "DevOps & Tools": [
+            "Git",
+            "Docker",
+            "Kubernetes",
+            "Jenkins",
+            "Linux",
+            "JIRA",
+            "Confluence",
+            "Maven",
+            "Gradle",
+            "npm",
+            "Terraform",
+            "Ansible"
+        ],
+        "Testing": [
+            "Unit Testing",
+            "Jest",
+            "Selenium",
+            "JUnit",
+            "TestNG",
+            "Cypress",
+            "Mocha",
+            "PHPUnit"
+        ],
+        "AI/ML & Data": [
+            "Machine Learning",
+            "TensorFlow",
+            "PyTorch",
+            "scikit-learn",
+            "Pandas",
+            "NumPy",
+            "Apache Spark",
+            "Power BI",
+            "Tableau",
+            "SAS"
+        ],
+        "Mobile Development": [
+            "iOS Development",
+            "Android Development",
+            "React Native",
+            "Flutter",
+            "Xamarin",
+            "SwiftUI",
+            "Kotlin Android"
+        ],
+        "Project Management": [
+            "Agile Methodologies",
+            "Scrum",
+            "Kanban",
+            "Waterfall",
+            "Project Planning",
+            "Team Leadership"
+        ],
+        "Design Tools": [
+            "Figma",
+            "Adobe XD",
+            "Sketch",
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            "InVision"
+        ]
+  };
 
   // Fetch users for suggestions
   useEffect(() => {
@@ -221,6 +345,110 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
     }
   };
 
+  const handleAddTech = (tech) => {
+    const currentTechs = formData.tech_stack ? formData.tech_stack.split(',').map(t => t.trim()) : [];
+    if (tech && !currentTechs.includes(tech)) {
+      const newTechStack = [...currentTechs, tech].join(', ');
+      setFormData(prev => ({
+        ...prev,
+        tech_stack: newTechStack
+      }));
+    }
+    setTechStackInput('');
+    setShowTechSuggestions(false);
+  };
+
+  const handleTechInputChange = (e) => {
+    setTechStackInput(e.target.value);
+    setShowTechSuggestions(true);
+  };
+
+  const handleTechKeyDown = (e) => {
+    if (e.key === 'Enter' && techStackInput.trim()) {
+      e.preventDefault();
+      handleAddTech(techStackInput.trim());
+    }
+  };
+
+  // Replace the existing tech stack input with this new version
+  const techStackSection = (
+    <div>
+      <label className="block text-sm font-medium text-gray-700">Tech Stack</label>
+      <div className="relative">
+        <div className="mt-1 p-2 w-full rounded-md border-gray-300 shadow-sm focus-within:border-2 focus-within:border-black focus-within:ring-0 focus-within:ring-black flex flex-wrap items-center gap-2">
+          {formData.tech_stack.split(',').map((tech, index) => (
+            tech.trim() && (
+              <span
+                key={index}
+                className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-sm flex items-center gap-1"
+              >
+                {tech.trim()}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newTechStack = formData.tech_stack
+                      .split(',')
+                      .filter((t, i) => i !== index)
+                      .join(', ');
+                    setFormData(prev => ({ ...prev, tech_stack: newTechStack }));
+                  }}
+                  className="hover:text-blue-900"
+                >
+                  ×
+                </button>
+              </span>
+            )
+          ))}
+          <input
+            type="text"
+            value={techStackInput}
+            onChange={handleTechInputChange}
+            onKeyDown={handleTechKeyDown}
+            onFocus={() => setShowTechSuggestions(true)}
+            placeholder={formData.tech_stack ? "" : "Add technologies..."}
+            className="flex-1 min-w-[120px] outline-none text-gray-900 placeholder-gray-500"
+          />
+        </div>
+
+        {/* Tech suggestions dropdown */}
+        {showTechSuggestions && techStackInput && (
+          <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg border max-h-40 overflow-y-auto">
+            {Object.entries(suggestedTechStack).map(([category, technologies]) => {
+              const filteredTechs = technologies.filter(tech =>
+                tech.toLowerCase().includes(techStackInput.toLowerCase()) &&
+                !formData.tech_stack.includes(tech)
+              );
+
+              if (filteredTechs.length === 0) return null;
+
+              return (
+                <div key={category}>
+                  <div className="px-4 py-2 bg-gray-50 text-sm font-medium text-gray-700">
+                    {category}
+                  </div>
+                  {filteredTechs.map((tech) => (
+                    <div
+                      key={tech}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleAddTech(tech)}
+                    >
+                      {tech}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+            {techStackInput && !Object.values(suggestedTechStack).flat().includes(techStackInput) && (
+              <div className="px-4 py-2 text-gray-500 text-sm">
+                Press Enter to add "{techStackInput}"
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
@@ -296,18 +524,7 @@ const ProjectForm = ({ initialData, onSubmit, isEditing }) => {
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Tech Stack (comma-separated)</label>
-        <input
-          type="text"
-          name="tech_stack"
-          value={formData.tech_stack}
-          onChange={handleChange}
-          required
-          placeholder="React, Node.js, MongoDB"
-          className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
+      {techStackSection}
 
       <div className="relative">
         <label className="block text-sm font-medium text-gray-700">Team Members</label>
