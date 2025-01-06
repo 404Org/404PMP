@@ -3,8 +3,8 @@ import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import HomePage from './pages/HomePage';
-import React, { useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route} from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProtectedRoutes from './components/ProtectedRoutes'
 import NewProjectsPage from './pages/NewProjectsPage'
@@ -22,20 +22,20 @@ import { UserProvider } from './hooks/UserContext';
 import NotFoundPage from './pages/NotFoundPage';
 import InterestedPage from './pages/InterestedPage';
 import Error404 from './components/Error404';
-import { isTokenExpired } from './auth';
+//import { isTokenExpired } from './auth';
 
 function App() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (isTokenExpired(token)) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('_id');
-      localStorage.removeItem('user');
-      navigate('/');
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token');
+  //   if (isTokenExpired(token)) {
+  //     localStorage.removeItem('token');
+  //     localStorage.removeItem('_id');
+  //     localStorage.removeItem('user');
+  //     navigate('/');
+  //   }
+  // }, [navigate]);
 
   return (
     <div>
