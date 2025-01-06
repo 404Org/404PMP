@@ -30,6 +30,7 @@ const MyProjectsPage = () => {
   useEffect(() => {
     setUser(userData);
     fetchProjects(userData);
+    // eslint-disable-next-line
   }, []);
 
   const fetchProjects = async (userData) => {
@@ -129,6 +130,7 @@ const MyProjectsPage = () => {
                     {/* Admin Actions */}
                     {user?.role === 'admin' && project.project_manager.user_id === user._id && (
                       <div ref={dropdownRef}>
+                        <div>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -163,6 +165,7 @@ const MyProjectsPage = () => {
                             </button>
                           </div>
                         )}
+                        </div>
                       </div>
                     )}
 

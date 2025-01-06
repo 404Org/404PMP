@@ -46,7 +46,7 @@ const ProjectList = () => {
         throw new Error('Failed to fetch projects');
       }
       if (response.status === 401 || !token) {
-        <AuthErrorModal/>
+        <AuthErrorModal />
       }
 
       const data = await response.json();
@@ -77,7 +77,7 @@ const ProjectList = () => {
       }
 
       if (response.status === 401 || !token) {
-        <AuthErrorModal/>
+        <AuthErrorModal />
       }
 
       fetchProjects();
@@ -97,7 +97,7 @@ const ProjectList = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-            
+
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -107,61 +107,62 @@ const ProjectList = () => {
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 relative flex flex-col h-64" // Fixed height
               >
                 {/* Top Section - Header */}
-                <div 
+                <div
                   className="p-6 cursor-pointer flex flex-col flex-grow"
                   onClick={() => navigate(`/projects/${project._id}`)}
                 >
-                  
+
 
                   {/* Title and Status */}
                   <div className="flex justify-start items-start mb-3">
                     <h2 className="text-xl font-semibold">{project.title}</h2>
-                    <span className={`px-3 py-1 ml-auto rounded-full text-sm ${
-                      project.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span className={`px-3 py-1 ml-auto rounded-full text-sm ${project.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
+                      }`}>
                       {project.status.replace('_', ' ')}
                     </span>
-                  {/* Admin Actions */}
-                  {user?.role === 'admin' && project.project_manager.user_id===user._id && (
-                    <div ref={dropdownRef}>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowActions(showActions === project._id ? null : project._id);
-                        }}
-                        className="p-1 hover:bg-gray-100 rounded-full"
-                      >
-                        <MoreVertical className="w-5 h-5 text-gray-600" />
-                      </button>
 
-                      {showActions === project._id && (
-                        <div className="absolute right-0 mt-2 w-38 bg-white rounded-lg shadow-lg border border-gray-200">
+                    {/* Admin Actions */}
+                    {user?.role === 'admin' && project.project_manager.user_id === user._id && (
+                      <div ref={dropdownRef}>
+                        <div>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/projects/${project._id}/edit`);
+                              setShowActions(showActions === project._id ? null : project._id)
                             }}
-                            className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                            className="p-1 hover:bg-gray-100 rounded-full"
                           >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit Project
+                            <MoreVertical className="w-5 h-5 text-gray-600" />
                           </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(project._id);
-                            }}
-                            className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete Project
-                          </button>
+                          {showActions === project._id && (
+                            <div className="absolute right-0 mt-2 w-38 bg-white rounded-lg shadow-lg border border-gray-200">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/projects/${project._id}/edit`);
+                                }}
+                                className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                              >
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit Project
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(project._id);
+                                }}
+                                className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete Project
+                              </button>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Description with fixed height */}
@@ -186,9 +187,9 @@ const ProjectList = () => {
                             {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
                           </div>
                         ))}
-                        <div 
-                            className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white" 
-                            title={project.team_members.slice(2).map(member => member.name).join(', ')}>
+                        <div
+                          className="w-10 h-10 font-semibold bg-blue-400 text-white rounded-full flex items-center justify-center border-2 border-white"
+                          title={project.team_members.slice(2).map(member => member.name).join(', ')}>
                           +{project.team_members.length - 2}
                         </div>
                       </>

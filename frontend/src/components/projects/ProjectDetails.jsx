@@ -24,6 +24,7 @@ const ProjectDetails = () => {
     setUser(userData);
     fetchProject();
     fetchInterestedUsers();
+    // eslint-disable-next-line
   }, [id]);
 
   const fetchProject = async () => {

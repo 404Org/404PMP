@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Coffee, Bug, Code, Terminal, Laptop, RefreshCw, Database, Wifi, BatteryCharging } from 'lucide-react';
+import { Search, Coffee} from 'lucide-react';
 
 const Error404 = () => {
   const [searchText, setSearchText] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [searchMessage, setSearchMessage] = useState('');
-  const [debugAttempts, setDebugAttempts] = useState(0);
+  //const [debugAttempts, setDebugAttempts] = useState(0);
   const [coffeeLevel, setCoffeeLevel] = useState(0);
   const [coffeeMessage, setCoffeeMessage] = useState('Developer needs coffee! ☕');
 
@@ -71,6 +71,7 @@ const Error404 = () => {
       setIsSearching(false);
       setSearchMessage('');
     }
+    // eslint-disable-next-line
   }, [searchText]);
 
   const generateSearchResponse = (search) => {

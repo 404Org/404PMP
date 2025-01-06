@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, CheckCircle, XCircle } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const ResetPasswordPage = () => {
