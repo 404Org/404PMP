@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Coffee} from 'lucide-react';
+import { Search, Coffee, ArrowBigLeftIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Error404 = () => {
   const [searchText, setSearchText] = useState('');
@@ -9,6 +10,7 @@ const Error404 = () => {
   //const [debugAttempts, setDebugAttempts] = useState(0);
   const [coffeeLevel, setCoffeeLevel] = useState(0);
   const [coffeeMessage, setCoffeeMessage] = useState('Developer needs coffee! ☕');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const coffeeMessages = [
     "Developer needs coffee! ☕",
@@ -87,6 +89,14 @@ const Error404 = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-xl p-8 max-w-xl w-full space-y-6">
+        {/* Back button */}
+        <button
+          onClick={() => navigate('/')}
+        //   className="bg-blue-600 text-white px-4 py-2 rounded-full mb-4"
+        >
+            <ArrowBigLeftIcon size={20} className="mr-2" />
+        </button>
+        
         <div className="flex justify-between items-center">
           <h1 
             className="text-8xl font-bold text-blue-600 cursor-pointer transition-transform duration-700 ease-in-out"

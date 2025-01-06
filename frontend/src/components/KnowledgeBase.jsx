@@ -101,8 +101,8 @@ const KnowledgeBaseManager = () => {
                     const errorData = await response.json();
                     throw new Error(errorData.error || 'Failed to add link');
                 }
-   
-                //const data = JSON.parse(responseText); // Parse the response text
+
+                // const data = JSON.parse(responseText); // Parse the response text
                 showAlert('Link added successfully');
                 fetchKnowledgeBaseItems();
                 setNewLink('');
