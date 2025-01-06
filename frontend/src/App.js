@@ -2,8 +2,9 @@ import './App.css';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import HomePage from './pages/HomePage'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProtectedRoutes from './components/ProtectedRoutes'
 import NewProjectsPage from './pages/NewProjectsPage'
@@ -20,12 +21,26 @@ import UserEdit from './components/users/UserEdit';
 import { UserProvider } from './hooks/UserContext';
 import NotFoundPage from './pages/NotFoundPage';
 import InterestedPage from './pages/InterestedPage';
+import Error404 from './components/Error404';
+import { isTokenExpired } from './auth';
 
 function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (isTokenExpired(token)) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('_id');
+      localStorage.removeItem('user');
+      navigate('/');
+    }
+  }, [navigate]);
+
   return (
     <div>
       <UserProvider>
-        <Router>
+        {/* <Router> */}
           <div>
             <Routes>
               <Route element={<ProtectedRoutes authenticationRequired={false} />}>
@@ -49,10 +64,11 @@ function App() {
                 <Route path="/users/:id/edit" element={<UserEdit />} />
                 <Route path="/interested/:projectId" element={<InterestedPage />} />
                 <Route path="*" element={<NotFoundPage />} />
+                <Route path="/404" element={<Error404 />} />
               </Route>
             </Routes>
           </div>
-        </Router>
+        {/* </Router> */}
       </UserProvider>
     </div>
   );
