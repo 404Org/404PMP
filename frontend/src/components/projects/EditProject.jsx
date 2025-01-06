@@ -40,6 +40,7 @@ const EditProject = () => {
 
   useEffect(() => {
     fetchProject();
+    // eslint-disable-next-line
   }, [id]);
 
   const handleSubmit = async (formData) => {

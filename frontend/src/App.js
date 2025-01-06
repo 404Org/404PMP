@@ -4,7 +4,7 @@ import LoginPage from './pages/LoginPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import HomePage from './pages/HomePage';
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProtectedRoutes from './components/ProtectedRoutes'
 import NewProjectsPage from './pages/NewProjectsPage'

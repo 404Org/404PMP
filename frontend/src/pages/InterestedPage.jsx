@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { CheckCircle, XCircle, Mail, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AuthErrorModal from '../components/AuthErrorModal';
 

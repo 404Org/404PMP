@@ -101,7 +101,7 @@ const KnowledgeBaseManager = () => {
                     throw new Error(errorData.error || 'Failed to add link');
                 }
 
-                const data = JSON.parse(responseText); // Parse the response text
+                // const data = JSON.parse(responseText); // Parse the response text
                 showAlert('Link added successfully');
                 fetchKnowledgeBaseItems();
                 setNewLink('');
@@ -245,7 +245,7 @@ const KnowledgeBaseManager = () => {
             if (!response.ok) throw new Error('Failed to fetch project members');
 
             const projectData = await response.json();
-            const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
+            // const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
             setIsUserTeamMember(projectData.project.team_members.some(member => member.user_id === user._id)); // Check if the user is a member of the project
         } catch (error) {
             console.error('Membership check error:', error);
