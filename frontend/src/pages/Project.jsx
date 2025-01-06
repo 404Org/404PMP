@@ -117,50 +117,48 @@ const ProjectList = () => {
                   <div className="flex justify-start items-start mb-3">
                     <h2 className="text-xl font-semibold">{project.title}</h2>
                     <span className={`px-3 py-1 ml-auto rounded-full text-sm ${project.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
+                      project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                        'bg-yellow-100 text-yellow-800'
                       }`}>
                       {project.status.replace('_', ' ')}
                     </span>
 
                     {/* Admin Actions */}
                     {user?.role === 'admin' && project.project_manager.user_id === user._id && (
-                      <div ref={dropdownRef}>
-                        <div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowActions(showActions === project._id ? null : project._id)
-                            }}
-                            className="p-1 hover:bg-gray-100 rounded-full"
-                          >
-                            <MoreVertical className="w-5 h-5 text-gray-600" />
-                          </button>
-                          {showActions === project._id && (
-                            <div className="absolute right-0 mt-2 w-38 bg-white rounded-lg shadow-lg border border-gray-200">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/projects/${project._id}/edit`);
-                                }}
-                                className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
-                              >
-                                <Edit className="w-4 h-4 mr-2" />
-                                Edit Project
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDelete(project._id);
-                                }}
-                                className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
-                              >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                Delete Project
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                      <div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowActions(showActions === project._id ? null : project._id)
+                          }}
+                          className="p-1 hover:bg-gray-100 rounded-full"
+                        >
+                          <MoreVertical className="w-5 h-5 text-gray-600" />
+                        </button>
+                        {showActions === project._id && (
+                          <div className="absolute right-0 mt-2 w-38 bg-white rounded-lg shadow-lg border border-gray-200">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/projects/${project._id}/edit`);
+                              }}
+                              className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                            >
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit Project
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(project._id);
+                              }}
+                              className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete Project
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
