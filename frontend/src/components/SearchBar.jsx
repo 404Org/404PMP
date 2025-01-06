@@ -113,7 +113,7 @@ const SearchBar = () => {
           </div>
 
           {/* Search Results Dropdown */}
-          {showResults && filteredProjects.length > 0 && (
+          {showResults && (
             <div className="absolute w-full mt-2 bg-white rounded-lg shadow-lg max-h-80 overflow-y-auto z-50">
               {filteredProjects.map((project) => (
                 <div
@@ -139,6 +139,17 @@ const SearchBar = () => {
                   </div>
                 </div>
               ))}
+              {searchTerm.toLowerCase() === '404' && (
+                <div
+                  className="p-4 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                  onClick={() => navigate('/404')}
+                >
+                  <div className="font-semibold text-gray-800">Error 404 Page</div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    Click here to see the Error 404 page.
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
