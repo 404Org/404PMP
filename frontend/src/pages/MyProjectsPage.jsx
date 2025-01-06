@@ -129,8 +129,7 @@ const MyProjectsPage = () => {
 
                     {/* Admin Actions */}
                     {user?.role === 'admin' && project.project_manager.user_id === user._id && (
-                      <div ref={dropdownRef}>
-                        <div>
+                      <div>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -165,7 +164,6 @@ const MyProjectsPage = () => {
                             </button>
                           </div>
                         )}
-                        </div>
                       </div>
                     )}
 
