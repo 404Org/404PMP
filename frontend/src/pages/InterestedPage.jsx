@@ -116,12 +116,23 @@ const InterestedPage = () => {
   };
 
   const calculateMatchPercentage = (userSkills) => {
-    if (!userSkills || !Array.isArray(userSkills)) {
-      return 0;
+    if (!userSkills || !projectRequiredSkills) {
+        return 0;
     }
-    const matchingSkills = userSkills.filter(skill =>
-      projectRequiredSkills.includes(skill)
+    
+    // Convert userSkills string to array if it's a string
+    const userSkillsArray = typeof userSkills === 'string' 
+        ? userSkills.split(',').map(skill => skill.trim())
+        : userSkills;
+
+    if (!Array.isArray(userSkillsArray) || userSkillsArray.length === 0) {
+        return 0;
+    }
+
+    const matchingSkills = userSkillsArray.filter(skill =>
+        projectRequiredSkills.includes(skill)
     );
+
     return Math.round((matchingSkills.length / projectRequiredSkills.length) * 100);
   };
 
@@ -226,16 +237,17 @@ const InterestedPage = () => {
                 <div className="mt-2">
                   <p className="text-sm font-medium mb-1">Skills:</p>
                   <div className="flex flex-wrap gap-2">
-                    {Array.isArray(user.skills) && user.skills.map(skill => (
-                      <span
-                        key={skill}
-                        className={`px-2 py-1 text-sm rounded-full ${user.matchingSkills && user.matchingSkills.includes(skill)
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'bg-slate-200 text-slate-700'
-                          }`}
-                      >
-                        {skill}
-                      </span>
+                    {(typeof user.skills === 'string' ? user.skills.split(',') : user.skills).map(skill => (
+                        <span
+                            key={skill}
+                            className={`px-2 py-1 text-sm rounded-full ${
+                                projectRequiredSkills.includes(skill.trim())
+                                    ? 'bg-blue-100 text-blue-700'
+                                    : 'bg-slate-200 text-slate-700'
+                            }`}
+                        >
+                            {skill.trim()}
+                        </span>
                     ))}
                   </div>
                 </div>

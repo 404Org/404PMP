@@ -13,17 +13,17 @@ const ProjectDetails = () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [interestedUsersCount, setInterestedUsersCount] = useState(0);
 
   const handleInterestPage = () => {
     navigate(`/interested/${id}`);
-
   };
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
     setUser(userData);
     fetchProject();
+    fetchInterestedUsers();
   }, [id]);
 
   const fetchProject = async () => {
@@ -54,6 +54,27 @@ const ProjectDetails = () => {
     }
   };
 
+  const fetchInterestedUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${id}/interested`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch interested users');
+      }
+
+      const data = await response.json();
+      setInterestedUsersCount(data.interested_users.length);
+    } catch (err) {
+      console.error('Failed to fetch interested users:', err);
+    }
+  };
+
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-600">{error}</div>;
   if (!project) return <div className="text-center mt-8">Project not found</div>;
@@ -69,15 +90,28 @@ const ProjectDetails = () => {
             <div className="bg-white rounded-lg shadow-md p-6 ml-60">
               <div className="flex justify-between items-start mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
-                {user?.role === 'admin' && project.project_manager.user_id===user._id && (
+                {user?.role === 'admin' && project.project_manager.user_id === user._id && (
                   <div className="flex items-center">
-                    { project.status==="upcoming" && (
-                      <button
-                        onClick={handleInterestPage}
-                        className={`flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400`}
-                      >
-                        <UsersRound className="w-8 h-8" />
-                      </button>
+                    {project.status === "upcoming" && (
+                      <div className="relative group">
+                        <button
+                          onClick={handleInterestPage}
+                          className="flex items-center  mr-3 space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400 relative"
+                        >
+                          <UsersRound className="w-8 h-8" />
+                          {interestedUsersCount > 0 && (
+                            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                              {interestedUsersCount}
+                            </span>
+                          )}
+                        </button>
+                        <div
+                          className="absolute left-1/2 -translate-x-1/2 top-full mt-2 min-w-[150px] min-h-7 px-3 py-1 bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-center"
+                        >
+                          View Interested Users
+                        </div>
+                      </div>
+
                     )}
                     <button
                       onClick={() => navigate(`/projects/${id}/edit`)}
@@ -152,7 +186,7 @@ const ProjectDetails = () => {
                         <div className="w-10 h-10 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white">
                           {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
                         </div>
-                        
+
 
                         <span className="text-gray-700 text-base">
                           {member?.user_id === project.project_manager.user_id

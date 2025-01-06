@@ -10,7 +10,6 @@ const NewProjectsPage = () => {
   const [error, setError] = useState(null);
   const [showActions, setShowActions] = useState(null);
   const [user, setUser] = useState(null);
-  const [interestedProjects, setInterestedProjects] = useState({});
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -93,10 +92,35 @@ const NewProjectsPage = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const token = localStorage.getItem('token');
 
-    setInterestedProjects((prev) => ({
-      ...prev,
-      [project._id]: !prev[project._id],
-    }));
+    setProjects(currentProjects => 
+      currentProjects.map(p => {
+        if (p._id === project._id) {
+          return {
+            ...p,
+            interested_users: [...p.interested_users || [], { user_id: user._id, name: user.name }]
+          };
+        }
+        return p;
+      })
+    );
+
+    const notificationResponse = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/notifications`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: project.project_manager.user_id,
+        type: 'project_interest',
+        content: `${user.name} is interested in project ${project.title}`,
+        reference_id: project._id,
+      }),
+    });
+    
+    if (!notificationResponse.ok) {
+      console.error('Failed to send notification');
+    }
 
     const response = await fetch(`${process.env.REACT_APP_HTTP_IP_ADDRESS_URL}/projects/${project._id}/interested`, {
       method: 'POST',
@@ -108,10 +132,25 @@ const NewProjectsPage = () => {
 
     if (!response.ok) {
       console.error('Failed to add to interested list');
+      setProjects(currentProjects =>
+        currentProjects.map(p => {
+          if (p._id === project._id) {
+            return {
+              ...p,
+              interested_users: (p.interested_users || []).filter(u => u.user_id !== user._id)
+            };
+          }
+          return p;
+        })
+      );
     }
   };
 
   const checkUserStatus = (project) => {
+    if (!project.team_members || !project.interested_users || !user) {
+      return 'not_interested';
+    }
+
     if (project.team_members.some(member => member.user_id === user._id)) {
       return 'joined';
     }
