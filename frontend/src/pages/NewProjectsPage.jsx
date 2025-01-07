@@ -147,17 +147,25 @@ const NewProjectsPage = () => {
   };
 
   const checkUserStatus = (project) => {
-    if (project.team_members.some(member => member.user_id === user._id)) {
-      return 'joined';
-    }
-    if (project.interested_users.some(interested => interested.user_id === user._id)) {
-      return 'requested';
-    }
-    if (!project.team_members || !project.interested_users || !user) {
+    // Early return if project or user is undefined
+    if (!project || !user) {
       return 'not_interested';
     }
-
-    
+  
+    // Ensure arrays exist with default empty arrays
+    const teamMembers = project.team_members || [];
+    const interestedUsers = project.interested_users || [];
+  
+    // Check if user is in team members
+    if (teamMembers.some(member => member.user_id === user._id)) {
+      return 'joined';
+    }
+  
+    // Check if user is in interested users
+    if (interestedUsers.some(interested => interested.user_id === user._id)) {
+      return 'requested';
+    }
+  
     return 'not_interested';
   };
 
