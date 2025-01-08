@@ -98,11 +98,11 @@ const ProjectDetails = () => {
                         <div className="relative group">
                           <button
                             onClick={handleInterestPage}
-                            className="flex items-center space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400"
+                            className="flex items-center  mr-3 space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400 relative"
                           >
-                            <UsersRound className="w-6 h-6 sm:w-8 sm:h-8" />
+                            <UsersRound className="w-8 h-8" />
                             {interestedUsersCount > 0 && (
-                              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                                 {interestedUsersCount}
                               </span>
                             )}
@@ -134,13 +134,12 @@ const ProjectDetails = () => {
                     <div>
                       <h2 className="text-lg sm:text-xl font-semibold mb-2">Status</h2>
                       <span
-                        className={`inline-block px-3 py-1 rounded-full text-sm ${
-                          project.status === 'completed'
+                        className={`inline-block px-3 py-1 rounded-full text-sm ${project.status === 'completed'
                             ? 'bg-green-100 text-green-800'
                             : project.status === 'in_progress'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}
                       >
                         {project.status.replace('_', ' ')}
                       </span>
