@@ -254,9 +254,9 @@ const KnowledgeBaseManager = () => {
     };
 
     return (
-        <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200 p-6 w-100">
+        <div className="w-full max-w-7xl mx-auto bg-white rounded-lg shadow-md border border-gray-200 p-4 sm:p-6 md:p-8">
             {alert.show && (
-                <div className={`p-4 rounded-md mb-4 ${alert.type === 'error'
+                <div className={`p-3 sm:p-4 rounded-md mb-3 sm:mb-4 text-sm sm:text-base ${alert.type === 'error'
                     ? 'bg-red-100 text-red-700'
                     : 'bg-green-100 text-green-700'
                     }`}>
@@ -264,8 +264,8 @@ const KnowledgeBaseManager = () => {
                 </div>
             )}
 
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-xl font-semibold">Project Knowledge Base</h1>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                <h1 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-0">Project Knowledge Base</h1>
                 {isUserTeamMember && (
                     <button
                         onClick={() => setIsDialogOpen(true)}

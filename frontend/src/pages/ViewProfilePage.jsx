@@ -121,7 +121,7 @@ const ViewProfilePage = () => {
                         <p>{error}</p>
                     </div>
                 ) : userData ? (
-                    <div className="bg-white shadow-md rounded-lg w-full max-w-3xl p-8">
+                    <div className="bg-white shadow-md rounded-lg w-full max-w-3xl p-8 sm:mx-12">
                         <h2 className="text-3xl font-bold text-center mb-6">Profile Overview</h2>
 
                         <div className="space-y-8">
