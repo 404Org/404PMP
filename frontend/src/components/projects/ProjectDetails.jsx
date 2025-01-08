@@ -83,148 +83,146 @@ const ProjectDetails = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
-      <div className="py-8 mx-auto">
-        <div className="flex max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 gap-6 ">
-          {/* Left Section: Project Details */}
-          <div className="flex-[2] space-y-6">
-            {/* Project Card */}
-            <div className="bg-white rounded-lg shadow-md p-6 ml-60">
-              <div className="flex justify-between items-start mb-6">
-                <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
-                {user?.role === 'admin' && project.project_manager.user_id === user._id && (
-                  <div className="flex items-center">
-                    {project.status === "upcoming" && (
-                      <div className="relative group">
-                        <button
-                          onClick={handleInterestPage}
-                          className="flex items-center  mr-3 space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400 relative"
-                        >
-                          <UsersRound className="w-8 h-8" />
-                          {interestedUsersCount > 0 && (
-                            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                              {interestedUsersCount}
-                            </span>
-                          )}
-                        </button>
-                        <div
-                          className="absolute left-1/2 -translate-x-1/2 top-full mt-2 min-w-[150px] min-h-7 px-3 py-1 bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-center"
-                        >
-                          View Interested Users
+      <div className="py-4 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+            {/* Left Section: Project Details */}
+            <div className="flex-1 space-y-4 lg:space-y-6">
+              {/* Project Card */}
+              <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
+                  <h1 className="text-3xl sm:text-3xl font-semibold text-gray-900">{project.title}</h1>
+                  {user?.role === 'admin' && project.project_manager.user_id === user._id && (
+                    <div className="flex items-center w-full sm:w-auto">
+                      {project.status === "upcoming" && (
+                        <div className="relative group">
+                          <button
+                            onClick={handleInterestPage}
+                            className="flex items-center  mr-3 space-x-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 text-blue-400 relative"
+                          >
+                            <UsersRound className="w-8 h-8" />
+                            {interestedUsersCount > 0 && (
+                              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                {interestedUsersCount}
+                              </span>
+                            )}
+                          </button>
+                          <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-32 px-2 py-1 bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-center">
+                            View Interested Users
+                          </div>
                         </div>
-                      </div>
-
-                    )}
-                    <button
-                      onClick={() => navigate(`/projects/${id}/edit`)}
-                      className="px-4 py-2 ml-2 bg-blue-400 text-white rounded-md hover:bg-blue-500 w-32"
-                    >
-                      Edit Project
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-6">
-                {/* Description */}
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">Description</h2>
-                  <p className="text-gray-700">{project.description}</p>
+                      )}
+                      <button
+                        onClick={() => navigate(`/projects/${id}/edit`)}
+                        className="px-4 py-2 ml-2 bg-blue-400 text-white rounded-md hover:bg-blue-500 w-full sm:w-32"
+                      >
+                        Edit Project
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* Status and Timeline */}
-                <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4 sm:space-y-6">
+                  {/* Description */}
                   <div>
-                    <h2 className="text-xl font-semibold mb-2">Status</h2>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${project.status === 'completed'
-                        ? 'bg-green-100 text-green-800'
-                        : project.status === 'in_progress'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                    >
-                      {project.status.replace('_', ' ')}
-                    </span>
+                    <h2 className="text-lg sm:text-xl font-semibold mb-2">Description</h2>
+                    <p className="text-gray-700">{project.description}</p>
                   </div>
-                  <div>
-                    <h2 className="text-xl font-semibold mb-2">Timeline</h2>
-                    <p className="text-gray-700">
-                      {new Date(project.start_date).toLocaleDateString()} -{' '}
-                      {new Date(project.end_date).toLocaleDateString()}
-                    </p>
+
+                  {/* Status and Timeline */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div>
+                      <h2 className="text-lg sm:text-xl font-semibold mb-2">Status</h2>
+                      <span
+                        className={`inline-block px-3 py-1 rounded-full text-sm ${project.status === 'completed'
+                            ? 'bg-green-100 text-green-800'
+                            : project.status === 'in_progress'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}
+                      >
+                        {project.status.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <div>
+                      <h2 className="text-lg sm:text-xl font-semibold mb-2">Timeline</h2>
+                      <p className="text-gray-700">
+                        {new Date(project.start_date).toLocaleDateString()} -{' '}
+                        {new Date(project.end_date).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Comments Section - Hidden on mobile */}
+              <div className="hidden lg:block">
+                <div className="bg-white rounded-lg shadow-md p-4 sm:p-8">
+                  <Comments projectId={id} />
                 </div>
               </div>
             </div>
 
-            {/* Comments Section */}
-            <div className="bg-white rounded-lg shadow-md p-8 ml-60">
-              <Comments projectId={id} />
+            {/* Right Section */}
+            <div className="flex flex-col gap-4 lg:gap-6 lg:w-96">
+              {/* Team Members Card */}
+              <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-semibold mb-4">Team Members</h2>
+                <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
+                  {[project.project_manager, ...project.team_members.filter(
+                    (member) => member.user_id !== project.project_manager.user_id
+                  )].map((member, index) => {
+                    if (typeof member.name === 'string') {
+                      return (
+                        <div
+                          key={index}
+                          className="flex rounded-l-3xl p-1 items-center space-x-2 cursor-pointer hover:bg-gray-100"
+                          onClick={() => navigate(`/users/${member.user_id}`)}
+                        >
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white">
+                            {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
+                          </div>
+                          <span className="text-gray-700 text-sm sm:text-base">
+                            {member?.user_id === project.project_manager.user_id
+                              ? `${member.name} (PM)`
+                              : member.name}
+                          </span>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+
+              {/* Tech Stack */}
+              <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-semibold mb-4">Tech Stack</h2>
+                <div className="border-t border-gray-200 mt-2 pt-4">
+                  <div className="flex flex-wrap gap-2">
+                    {project.tech_stack.map((tech, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Knowledge Base */}
+              <div>
+                <KnowledgeBaseManager />
+              </div>
             </div>
           </div>
 
-          {/* Right Section */}
-          <div className="flex flex-col gap-6 flex-[0.8] mr-60">
-
-            {/* Team Members Card */}
-            <div className="bg-white rounded-lg shadow-md p-6 w-100">
-              <h1 className="text-xl font-semibold mb-4">Team Members</h1>
-              <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
-                {/* Separate project manager from the rest of the team members */}
-                {[
-                  project.project_manager, // Add project manager first
-                  ...project.team_members.filter(
-                    (member) => member.user_id !== project.project_manager.user_id
-                  ),
-                ].map((member, index) => {
-                  if (typeof member.name === 'string') {
-                    return (
-                      <div
-                        key={index}
-                        className="flex rounded-l-3xl p-1 items-center space-x-2 cursor-pointer hover:bg-gray-100"
-                        onClick={() => navigate(`/users/${member.user_id}`)}
-                      >
-                        <div className="w-10 h-10 bg-blue-400 font-semibold rounded-full flex items-center justify-center text-white">
-                          {member.name.charAt(0).toUpperCase()}{member.name.charAt(1).toUpperCase()}
-                        </div>
-
-
-                        <span className="text-gray-700 text-base">
-                          {member?.user_id === project.project_manager.user_id
-                            ? `${member.name} (PM)`
-                            : member.name}
-                        </span>
-                      </div>
-                    );
-                  } else {
-                    console.error('Expected a string but got:', member);
-                    return null;
-                  }
-                })}
-              </div>
-            </div>
-
-
-            {/* Tech Stack */}
-            <div className="bg-white rounded-lg shadow-md p-6 w-100">
-              <h1 className="text-xl font-semibold mb-4">Tech Stack</h1>
-              <div className="border-t border-gray-200 mt-2 pt-4 space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {project.tech_stack.map((tech, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Additional Info Card */}
-            <div>
-              <KnowledgeBaseManager />
+          {/* Comments Section - Only visible on mobile */}
+          <div className="lg:hidden mt-4">
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-8">
+              <Comments projectId={id} />
             </div>
           </div>
         </div>
