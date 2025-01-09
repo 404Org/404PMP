@@ -144,9 +144,9 @@ const SearchBar = () => {
                   className="p-4 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
                   onClick={() => navigate('/404')}
                 >
-                  <div className="font-semibold text-gray-800">Error 404 Page</div>
+                  <div className="font-semibold text-gray-800">Error 404</div>
                   <div className="text-sm text-gray-600 mt-1">
-                    Click here to see the Error 404 page.
+                    Click here to find the Easter Egg🥚🎉.
                   </div>
                 </div>
               )}
