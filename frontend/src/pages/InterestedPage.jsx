@@ -240,7 +240,7 @@ const InterestedPage = () => {
 
                 <div className="mt-2">
                   <p className="text-sm font-medium mb-1">Skills:</p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 w-48 sm:w-64 md:w-80">
                     {(typeof user.skills === 'string' ? user.skills.split(',') : user.skills).map(skill => (
                         <span
                             key={skill}
@@ -260,7 +260,7 @@ const InterestedPage = () => {
                   <span className="text-sm font-medium">
                     Skills Match: {calculateMatchPercentage(user.skills)}%
                   </span>
-                  <div className="w-full bg-slate-200 rounded-full h-2 mt-1">
+                  <div className="w-48 sm:w-64 md:w-80 bg-slate-200 rounded-full h-2 mt-1">
                     <div
                       className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${calculateMatchPercentage(user.skills)}%` }}
@@ -315,7 +315,7 @@ const InterestedPage = () => {
           <div className="flex rounded-lg bg-slate-100 p-1 mb-4">
             <button
               onClick={() => setActiveTab('interested')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'interested'
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors mr-1 ${activeTab === 'interested'
                 ? 'bg-white shadow-sm'
                 : 'text-slate-600 hover:bg-white/50'
                 }`}

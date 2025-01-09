@@ -128,6 +128,10 @@ const UserDetails = () => {
                 <p className="text-gray-800">{userData.experience}</p>
               </div>
             </div>
+            <div className="col-span-full mt-4">
+              <label className="text-sm text-gray-500">Bio</label>
+              <p className="text-gray-800 mt-1 whitespace-pre-line">{userData.bio}</p>
+            </div>
           </div>
 
           {/* Tech Stack */}
