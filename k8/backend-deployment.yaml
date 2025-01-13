@@ -14,12 +14,18 @@ spec:
     spec:
       containers:
       - name: backend
-        image: backend:latest
+        image: backend:1.0.0
         ports:
-        - containerPort: 8080
+        - containerPort: 5000
         env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: "prod"
+        - name: FLASK_APP
+          value: "main.py"
+        - name: MONGO_URI
+          value: "mongodb+srv://admin:Prince050803@cluster0.nhnrnl4.mongodb.net/project_portal?retryWrites=true&w=majority&appName=Cluster0"
+        - name: JWT_SECRET_KEY
+          value: "team404notfound"
+        - name: JWT_ACCESS_TOKEN_EXPIRES
+          value: "3600"
 ---
 apiVersion: v1
 kind: Service
@@ -29,7 +35,7 @@ spec:
   selector:
     app: backend
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: 5000
+    targetPort: 5000
   type: ClusterIP 
   
