@@ -20,11 +20,11 @@ FROM nginx:alpine
 # Copy built assets from build stage
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy nginx config if you have any custom configuration
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Update exposed port to 3000
+EXPOSE 3000
 
-# Expose port 80
-EXPOSE 80
+# Add custom nginx configuration for port 3000
+RUN echo 'server { listen 3000; location / { root /usr/share/nginx/html; try_files $uri $uri/ /index.html; } }' > /etc/nginx/conf.d/default.conf
 
 # Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["nginx", "-g", "daemon off;"]
