@@ -21,11 +21,44 @@ spec:
         - name: FLASK_APP
           value: "main.py"
         - name: MONGO_URI
-          value: "mongodb+srv://admin:Prince050803@cluster0.nhnrnl4.mongodb.net/project_portal?retryWrites=true&w=majority&appName=Cluster0"
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: mongodb-uri
         - name: JWT_SECRET_KEY
-          value: "team404notfound"
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: jwt-secret
+        - name: FLASK_ENV
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: flask-env
         - name: JWT_ACCESS_TOKEN_EXPIRES
-          value: "3600"
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: jwt-expires
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
 ---
 apiVersion: v1
 kind: Service
