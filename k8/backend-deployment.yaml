@@ -24,9 +24,20 @@ spec:
         - name: FLASK_ENV
           value: "production"
         - name: MONGO_URI
-          value: "mongodb+srv://admin:Prince050803@cluster0.nhnrnl4.mongodb.net/project_portal?retryWrites=true&w=majority&appName=Cluster0"
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: mongodb-uri
         - name: JWT_SECRET_KEY
-          value: "team404notfound"
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: jwt-secret
+        - name: FLASK_ENV
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: flask-env
         - name: JWT_ACCESS_TOKEN_EXPIRES
           value: "3600"
         resources:
