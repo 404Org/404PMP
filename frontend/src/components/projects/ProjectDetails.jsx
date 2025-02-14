@@ -126,7 +126,7 @@ const ProjectDetails = () => {
                   {/* Description */}
                   <div>
                     <h2 className="text-lg sm:text-xl font-semibold mb-2">Description</h2>
-                    <p className="text-gray-700">{project.description}</p>
+                    <p className="text-gray-700 whitespace-pre-wrap">{project.description}</p>
                   </div>
 
                   {/* Status and Timeline */}

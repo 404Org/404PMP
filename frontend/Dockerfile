@@ -1,30 +1,51 @@
+# Build stage
 FROM node:18-alpine as build
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and install dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy project files
+# Copy project files and build
 COPY . .
-
-# Build the app
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-# Copy built assets from build stage
-COPY --from=build /app/build /usr/share/nginx/html
+# Install curl and setup nginx user
+RUN apk add --no-cache curl && \
+    touch /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/cache/nginx
 
-# Copy nginx config if you have any custom configuration
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Create nginx configuration
+RUN echo ' \
+server { \
+    listen 80; \
+    listen [::]:80; \
+    server_tokens off; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
-# Expose port 80
+# Set permissions
+RUN chown -R nginx:nginx /etc/nginx/conf.d/default.conf && \
+    chown -R nginx:nginx /usr/share/nginx/html
+
+# Copy built assets with correct permissions
+COPY --from=build --chown=nginx:nginx /app/build /usr/share/nginx/html
+
+USER nginx
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:80 || exit 1
+
 EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["nginx", "-g", "daemon off;"]

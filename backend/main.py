@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from shared.database import init_db
@@ -7,12 +7,12 @@ from auth.routes import auth
 from projects.routes import projects
 from users.routes import users
 from comments.routes import comments
-from datetime import timedelta
 from notifications.routes import notifications
 from knowledge_base.routes import knowledge_base
 
 app = Flask(__name__)
-CORS(app)
+# Simple CORS configuration
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Configurations
 app.config["MONGO_URI"] = MONGO_URI
@@ -35,5 +35,9 @@ app.register_blueprint(knowledge_base)
 def home():
     return {"message": "Welcome to the Project Management Portal API"}
 
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)
